@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EssenceOfMagic", "EssenceOfMagic.csproj", "{2E0BB3FB-EBFD-4783-A7D7-CD2E23317F84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24516DF0-CA29-464C-9187-EE64CBCC38B0}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldEditor", "WorldEditor\WorldEditor.csproj", "{0F2580B2-929E-41F9-94A9-B77F5DFA3C74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E0BB3FB-EBFD-4783-A7D7-CD2E23317F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E0BB3FB-EBFD-4783-A7D7-CD2E23317F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E0BB3FB-EBFD-4783-A7D7-CD2E23317F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E0BB3FB-EBFD-4783-A7D7-CD2E23317F84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F2580B2-929E-41F9-94A9-B77F5DFA3C74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F2580B2-929E-41F9-94A9-B77F5DFA3C74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F2580B2-929E-41F9-94A9-B77F5DFA3C74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F2580B2-929E-41F9-94A9-B77F5DFA3C74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3BA24793-EEB1-437E-9CEF-B4D559A55E69}
+	EndGlobalSection
+EndGlobal

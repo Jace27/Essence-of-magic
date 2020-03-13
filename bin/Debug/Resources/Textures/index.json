@@ -1,0 +1,1149 @@
+[
+  {
+    "File": "pLayer.calm.gif",
+	"isAnimated": true,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 48,
+          "Height": 48
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 48,
+        "Height": 48,
+        "Left": 0,
+        "Top": 0,
+        "Right": 48,
+        "Bottom": 48,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 48,
+      "Height": 48
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "player",
+	"Type": 5
+  },
+  {
+    "File": "pLayer.calm.gif",
+	"isAnimated": true,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 48,
+          "Height": 48
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 48,
+        "Height": 48,
+        "Left": 0,
+        "Top": 0,
+        "Right": 48,
+        "Bottom": 48,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 48,
+      "Height": 48
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "player2",
+	"Type": 4
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1920,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1920,
+        "Y": 0,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1920,
+        "Top": 0,
+        "Right": 1984,
+        "Bottom": 64,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "empty",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 704
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 0,
+        "Y": 704,
+        "Width": 64,
+        "Height": 64,
+        "Left": 0,
+        "Top": 704,
+        "Right": 64,
+        "Bottom": 768,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "grass1",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 64,
+          "Y": 704
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 64,
+        "Y": 704,
+        "Width": 64,
+        "Height": 64,
+        "Left": 64,
+        "Top": 704,
+        "Right": 128,
+        "Bottom": 768,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "grass2",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 128,
+          "Y": 704
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 128,
+        "Y": 704,
+        "Width": 64,
+        "Height": 64,
+        "Left": 128,
+        "Top": 704,
+        "Right": 192,
+        "Bottom": 768,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "grass3",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 192,
+          "Y": 704
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 192,
+        "Y": 704,
+        "Width": 64,
+        "Height": 64,
+        "Left": 192,
+        "Top": 704,
+        "Right": 256,
+        "Bottom": 768,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "grass4",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 256,
+          "Y": 704
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 256,
+        "Y": 704,
+        "Width": 64,
+        "Height": 64,
+        "Left": 256,
+        "Top": 704,
+        "Right": 320,
+        "Bottom": 768,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "grass5",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 320,
+          "Y": 704
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 320,
+        "Y": 704,
+        "Width": 64,
+        "Height": 64,
+        "Left": 320,
+        "Top": 704,
+        "Right": 384,
+        "Bottom": 768,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "grass6",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1728,
+          "Y": 128
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1728,
+        "Y": 128,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1728,
+        "Top": 128,
+        "Right": 1792,
+        "Bottom": 192,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w25_11",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1792,
+          "Y": 128
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1792,
+        "Y": 128,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1792,
+        "Top": 128,
+        "Right": 1856,
+        "Bottom": 192,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w50_12",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1856,
+          "Y": 128
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1856,
+        "Y": 128,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1856,
+        "Top": 128,
+        "Right": 1920,
+        "Bottom": 192,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w25_13",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1728,
+          "Y": 192
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1728,
+        "Y": 192,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1728,
+        "Top": 192,
+        "Right": 1792,
+        "Bottom": 256,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w25_21",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1792,
+          "Y": 192
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1792,
+        "Y": 192,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1792,
+        "Top": 192,
+        "Right": 1856,
+        "Bottom": 256,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w50_22",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1856,
+          "Y": 192
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1856,
+        "Y": 192,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1856,
+        "Top": 192,
+        "Right": 1920,
+        "Bottom": 256,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w25_23",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1728,
+          "Y": 256
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1728,
+        "Y": 256,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1728,
+        "Top": 256,
+        "Right": 1792,
+        "Bottom": 320,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w25_31",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1792,
+          "Y": 256
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1792,
+        "Y": 256,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1792,
+        "Top": 256,
+        "Right": 1856,
+        "Bottom": 320,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w50_32",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1856,
+          "Y": 256
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1856,
+        "Y": 256,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1856,
+        "Top": 256,
+        "Right": 1920,
+        "Bottom": 320,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w25_33",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1792,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1792,
+        "Y": 0,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1792,
+        "Top": 0,
+        "Right": 1856,
+        "Bottom": 64,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w75_11",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1856,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1856,
+        "Y": 0,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1856,
+        "Top": 0,
+        "Right": 1920,
+        "Bottom": 64,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w75_12",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1792,
+          "Y": 64
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1792,
+        "Y": 64,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1792,
+        "Top": 64,
+        "Right": 1856,
+        "Bottom": 128,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w75_21",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1856,
+          "Y": 64
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1856,
+        "Y": 64,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1856,
+        "Top": 64,
+        "Right": 1920,
+        "Bottom": 128,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "coast_w75_22",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1984,
+          "Y": 1216
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1984,
+        "Y": 1216,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1984,
+        "Top": 1216,
+        "Right": 2048,
+        "Bottom": 1280,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "stones1",
+	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1920,
+          "Y": 1216
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1920,
+        "Y": 1216,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1920,
+        "Top": 1216,
+        "Right": 1984,
+        "Bottom": 1280,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 32,
+      "Y": 32
+    },
+    "ID": "stones2",
+	"Type": 1
+  },
+  {
+    "File": "dark_tree1.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 208,
+          "Height": 208
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 208,
+        "Height": 208,
+        "Left": 0,
+        "Top": 0,
+        "Right": 208,
+        "Bottom": 208,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 208,
+      "Height": 208
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 104,
+      "Y": 104
+    },
+    "ID": "dark_tree1",
+	"Type": 3
+  },
+  {
+    "File": "tree1.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 208,
+          "Height": 208
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 208,
+        "Height": 208,
+        "Left": 0,
+        "Top": 0,
+        "Right": 208,
+        "Bottom": 208,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 208,
+      "Height": 208
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 104,
+      "Y": 104
+    },
+    "ID": "tree1",
+	"Type": 3
+  },
+  {
+    "File": "house1.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 266,
+          "Height": 251
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 266,
+        "Height": 251,
+        "Left": 0,
+        "Top": 0,
+        "Right": 266,
+        "Bottom": 251,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 266,
+      "Height": 251
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 133,
+      "Y": 125
+    },
+    "ID": "house1",
+	"Type": 3
+  },
+  {
+    "File": "house2.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 302,
+          "Height": 280
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 302,
+        "Height": 280,
+        "Left": 0,
+        "Top": 0,
+        "Right": 302,
+        "Bottom": 280,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 302,
+      "Height": 280
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 151,
+      "Y": 140
+    },
+    "ID": "house2",
+	"Type": 3
+  },
+  {
+    "File": "house3.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 288,
+          "Height": 276
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 288,
+        "Height": 276,
+        "Left": 0,
+        "Top": 0,
+        "Right": 288,
+        "Bottom": 276,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 288,
+      "Height": 276
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 144,
+      "Y": 138
+    },
+    "ID": "house3",
+	"Type": 3
+  },
+  {
+    "File": "house4.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 370,
+          "Height": 289
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 370,
+        "Height": 289,
+        "Left": 0,
+        "Top": 0,
+        "Right": 370,
+        "Bottom": 289,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 370,
+      "Height": 289
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 185,
+      "Y": 144
+    },
+    "ID": "house4",
+	"Type": 3
+  },
+  {
+    "File": "house5.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 240,
+          "Height": 192
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 240,
+        "Height": 192,
+        "Left": 0,
+        "Top": 0,
+        "Right": 240,
+        "Bottom": 192,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 240,
+      "Height": 192
+    },
+    "Center": {
+      "IsEmpty": false,
+      "X": 120,
+      "Y": 96
+    },
+    "ID": "house5",
+	"Type": 3
+  }
+]
