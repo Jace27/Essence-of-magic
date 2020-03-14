@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
+using GLGDIPlus;
 
 namespace EssenceOfMagic
 {
@@ -14,6 +15,11 @@ namespace EssenceOfMagic
         public static InterfacePage[] Pages;
         public static void Init()
         {
+            Bitmap bmp = new Bitmap(GameData.Window.Width, GameData.Window.Height);
+            IMG.FromBitmap(bmp);
+            bmp.Dispose();
+            IMG.SetImageTiles(new System.Collections.Generic.List<RectangleF>() { new RectangleF(0, 0, GameData.Window.Width, GameData.Window.Height) });
+
             Pages = new InterfacePage[4];
 
             #region Game
@@ -49,26 +55,51 @@ namespace EssenceOfMagic
 
             _ = Task.Run(() =>
             {
-                DateTime last = DateTime.Now;
+                DateTime last1 = DateTime.Now;
+                DateTime last2 = DateTime.Now;
                 int f = 0;
                 while (true)
                 {
                     f++;
-                    Bitmap Output = new Bitmap(GameData.Window.Width, GameData.Window.Height);
-                    using (Graphics gr1 = Graphics.FromImage(Output))
+                    
+                    if (Owner != null)
                     {
-                        InterfacePage temp = new InterfacePage();
-                        for (int i = 0; i < Pages.Length; i++) if (Pages[i].Type == Page) temp = Pages[i];
-
-                        gr1.DrawImage(temp.GetBMP(), 0, 0, Output.Width, Output.Height);
+                        Owner.Invoke(new ThreadTransit(() => { DrawPage(); }));
                     }
-                    BMP = Output;
-                    GameTime.WaitForTick();
+
+                    double ms = 1000.0 / FPSlimit;
+                    TimeSpan diff = DateTime.Now - last2;
+                    if (diff.TotalMilliseconds < ms)
+                        Thread.Sleep((int)Math.Round(ms - diff.TotalMilliseconds, 0));
+                    last2 = DateTime.Now;
+
+                    if ((DateTime.Now - last1).TotalMilliseconds >= 1000)
+                    {
+                        last1 = DateTime.Now;
+                        FPS = f;
+                        f = 0;
+                    }
                 }
             });
         }
-        public static int FPS = 0;
-        private static Bitmap BMP = new Bitmap(GameData.Window.Width, GameData.Window.Height);
+        public static int FPS = 20;
+        public static int FPSlimit = 20;
+        public static GLMultiImage IMG = new GLMultiImage();
+        public static void DrawPage()
+        {
+            Bitmap Output = new Bitmap(GameData.Window.Width, GameData.Window.Height);
+            using (Graphics gr1 = Graphics.FromImage(Output))
+            {
+                InterfacePage temp = new InterfacePage();
+                for (int i = 0; i < Pages.Length; i++) if (Pages[i].Type == Page) temp = Pages[i];
+
+                gr1.DrawImage(temp.GetBMP(), 0, 0, Output.Width, Output.Height);
+            }
+            IMG.Free();
+            IMG.FromBitmap(Output);
+        }
+        public static Game Owner;
+        public delegate void ThreadTransit();
     }
 
     public class InterfacePage

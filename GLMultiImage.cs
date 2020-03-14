@@ -109,7 +109,7 @@ namespace GLGDIPlus
 		/// <param name="path">Image path.</param>
 		public void FromBitmap(Bitmap src)
 		{
-			bitmap = src;
+			bitmap = (Bitmap)src.Clone();
 
 			// Generate texture
 			GL.GenTextures(1, out TextureIndex);

@@ -31,6 +31,7 @@ namespace EssenceOfMagic
             GameObjects.Init();
             Creatures.Init();
             Players.Init();
+            Interface.Owner = this;
             Interface.Init();
 
             using (StreamReader sr = new StreamReader(GameData.WorldFolder + "\\world.json"))
@@ -243,13 +244,14 @@ namespace EssenceOfMagic
                     Invalidate(); 
                 }
             }
-            //e.DrawImage(IntIMG, 0, 0, Width, Height);
 
             e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
-            e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
+            //e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
             e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 60));
-            AddedInfo = Interface.FPS.ToString();
-            e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
+            AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024);
+            //e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
+
+            e.DrawMultiImage(Interface.IMG);
         }
 
         bool A = false;
