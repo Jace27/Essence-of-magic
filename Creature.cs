@@ -16,20 +16,16 @@ namespace EssenceOfMagic
             Vulnarable = true;
 
             _hpRegen();
-            _mpRegen();
+            _needs();
+            //_mpRegen();
 
-            if (Animations != null)
-            {
-                if (Animations.Count != 0)
-                {
-                    Animation anim = Animations[ID + ".calm"];
-                    if (anim != null)
-                    {
-                        if (!anim.isInitialized) anim.Init();
-                        anim.Start(true);
-                    }
-                }
-            }
+            GameTime.OnSecond += GameTime_OnSecond;
+        }
+
+        private void GameTime_OnSecond()
+        {
+            if ((DateTime.Now - LastSleep).TotalMilliseconds > GameData.DayLength.TotalMilliseconds * 2)
+                SlowDeath();
         }
 
         new public Creature Clone()
@@ -44,7 +40,7 @@ namespace EssenceOfMagic
                     if (Animations._anims[i] != null)
                         temp.Animations._anims[i] = Animations._anims[i].Clone();
             }
-            if (Armor != null)
+            /*if (Armor != null)
                 temp.Armor = Armor.Clone();
             temp.DamageType = DamageType;
             temp.Location = new Location(Location.X, Location.Y, Location.Z);
@@ -57,7 +53,7 @@ namespace EssenceOfMagic
                 for (int i = 0; i < CurrentWeapons.Length; i++)
                     if (CurrentWeapons[i] != null)
                         temp.CurrentWeapons[i] = CurrentWeapons[i].Clone();
-            }
+            }*/
             temp.Size = new Size(Size.Width, Size.Height);
             if (Sprite != null)
                 temp.Sprite = Sprite.Clone();
@@ -102,8 +98,12 @@ namespace EssenceOfMagic
                 if (_hp > _hpmax) _hp = _hpmax;
             }
         }
-        public bool HPRegen { get; set; }
         private bool _hpregen;
+        public bool HPRegen
+        {
+            get { return _hpregen; }
+            set { if (Vulnarable) _hpregen = value; else _hpregen = true; }
+        }
         private double _hpregenspeed;
         public double HPRegenSpeed
         {
@@ -117,7 +117,7 @@ namespace EssenceOfMagic
                 if (_hpmax > 0 && !_hpregen)
                 {
                     _hpregen = true;
-                    while (isAlive)
+                    while (isAlive && _hpregen)
                     {
                         DateTime Old = DateTime.Now;
                         if (HPRegen) HP += (DateTime.Now - Old).TotalSeconds * HPRegenSpeed;
@@ -155,18 +155,134 @@ namespace EssenceOfMagic
                     if (_hpmax < 1) _hpmax = 1;
                     if (_hp < 1) _hp = 1;
                     _hpRegen();
-                    _mpRegen();
+                    _needs();
+                    //_mpRegen();
                 }
             }
         }
-        public bool Vulnarable { get; set; }
-        public void Kill()
+        private bool _vulnarable = true;
+        public bool Vulnarable
         {
-            Vulnarable = false;
+            get { return _vulnarable; }
+            set
+            {
+                _vulnarable = value;
+                if (value)
+                {
+                    _hpRegen();
+                    _needs();
+                }
+            }
+        }
+        public void SlowDeath()
+        {
+            if (Vulnarable)
+            {
+                _ = Task.Run(() =>
+                {
+                    _hpregen = false;
+                    while (Vulnarable && 
+                           (_satiety == 0 || 
+                           _water == 0 || 
+                           (DateTime.Now - LastSleep).TotalMilliseconds > (GameData.DayLength.TotalMilliseconds * 2)))
+                    {
+                        HP -= 2;
+                        Thread.Sleep(1000);
+                    }
+                });
+            }
+        }
+        public void Death()
+        {
+            Vulnarable = true;
             isDead = true;
         }
         #endregion
 
+        #region Progress (level, exp, skills)
+        private int _level = 1;
+        public int Level
+        {
+            get { return _level; }
+            set { if (value > 0) _level = value; }
+        }
+
+        private int _exp = 0;
+        public int Exp
+        {
+            get { return _exp; }
+            set
+            {
+                if (value >= 0) _exp = value;
+            }
+        }
+        #endregion
+
+        #region Needs (satiety, water, sleep)
+        private int _satiety = 100;
+        public int Satiety
+        {
+            get { return _satiety; }
+            set 
+            { 
+                if (value >= 0 && value < _satietymax) _satiety = value;
+                if (value == 0) SlowDeath();
+            }
+        }
+
+        private int _satietymax = 100;
+        public int SatietyMax
+        {
+            get { return _satietymax; }
+            set { if (value > 0) _satietymax = value; }
+        }
+
+        private int _water = 100;
+        public int Water
+        {
+            get { return _water; }
+            set
+            {
+                if (value >= 0 && value < _water) _water = value;
+                if (value == 0) SlowDeath();
+            }
+        }
+
+        private int _watermax = 100;
+        public int WaterMax
+        {
+            get { return _watermax; }
+            set { if (value > 0) _watermax = value; }
+        }
+
+        public DateTime LastSleep { get; set; }
+
+        private bool isNeedsCounting = false;
+        private void _needs()
+        {
+            if (!isNeedsCounting)
+            {
+                if (Vulnarable)
+                {
+                    _ = Task.Run(() =>
+                    {
+                        isNeedsCounting = true;
+                        while (Vulnarable)
+                        {
+                            Thread.Sleep(5000);
+                            _water--;
+                            _satiety--;
+                        }
+                        isNeedsCounting = false;
+                    });
+                }
+                else isNeedsCounting = false;
+            }
+        }
+        #endregion
+
+        #region deleted
+        /*
         #region Magic (MP)
         private double _mp = 0;
         public double MP
@@ -322,24 +438,7 @@ namespace EssenceOfMagic
             }
         }
         #endregion
-
-        #region Progress (level, exp, skills)
-        private int _level = 1;
-        public int Level
-        {
-            get { return _level; }
-            set { if (value > 0) _level = value; }
-        }
-
-        private int _exp = 0;
-        public int Exp
-        {
-            get { return _exp; }
-            set
-            {
-                if (value >= 0) _exp = value;
-            }
-        }
+        */
         #endregion
     }
 

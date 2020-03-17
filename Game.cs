@@ -226,13 +226,6 @@ namespace EssenceOfMagic
             }
             #endregion
 
-            #region Интерфейс
-            //GLImage IntIMG = new GLImage();
-            //Bitmap IntBMP = Interface.GetBMP();
-            //IntIMG.FromBitmap(IntBMP);
-            //IntIMG.SetImageTiles(new List<RectangleF>() { new RectangleF(0, 0, Width, Height) });
-            #endregion
-
             for (int i = 0; i < UT.Length; i++)
             {
                 try 
@@ -245,9 +238,9 @@ namespace EssenceOfMagic
                 }
             }
 
-            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
+            //e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
             //e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
-            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 60));
+            //e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 60));
             AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024);
             //e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
 

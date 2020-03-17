@@ -9,6 +9,7 @@ namespace EssenceOfMagic
     {
         // == ИГРОВОЕ ==
         public static World World;
+        public static TimeSpan DayLength = new TimeSpan(0, 20, 0);
 
         // == ТЕХНИЧЕСКОЕ ==
         public static JsonSerializerOptions JsonOpts = new JsonSerializerOptions()
