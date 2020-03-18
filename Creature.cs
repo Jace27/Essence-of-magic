@@ -269,7 +269,7 @@ namespace EssenceOfMagic
                         isNeedsCounting = true;
                         while (Vulnarable)
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(500);
                             _water--;
                             _satiety--;
                         }
