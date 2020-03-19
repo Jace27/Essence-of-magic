@@ -58,24 +58,12 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Game_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Game_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Game_KeyUp);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Game_MouseMove);
             this.ResumeLayout(false);
-
         }
 
         #endregion
 
         private GraphicSurface graphicSurface1;
-
-        public int TickDelay
-        {
-            get { return GameTime.TimeDelay; }
-            set
-            {
-                if (value > 0)
-                    GameTime.TimeDelay = value;
-                else
-                    GameTime.TimeDelay = 1;
-            }
-        }
     }
 }

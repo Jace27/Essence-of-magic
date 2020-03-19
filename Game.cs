@@ -238,11 +238,11 @@ namespace EssenceOfMagic
                 }
             }
 
-            //e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
-            //e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
-            //e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 60));
-            AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024);
-            //e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
+            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
+            e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
+            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 60));
+            AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024) + "МБ";
+            e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
 
             e.DrawMultiImage(Interface.IMG);
         }
@@ -254,7 +254,7 @@ namespace EssenceOfMagic
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
             AddedInfo = e.KeyCode.ToString();
-            if (Page == Pages.World && !GameTime.isFreezed)
+            if (Interface.Page == InterfacePages.Game && !GameTime.isFreezed)
             {
                 if (!e.Control && !e.Alt && !e.Shift)
                 {
@@ -291,6 +291,19 @@ namespace EssenceOfMagic
                     Task.Run(() => { Player.Move(direction); });
                 }
             }
+            if (Interface.Page == InterfacePages.Game && e.KeyCode == Keys.Escape)
+            {
+                Interface.Page = InterfacePages.Menu;
+                GameTime.isFreezed = true;
+            }
+            else if ((Interface.Page == InterfacePages.Inventory || 
+                      Interface.Page == InterfacePages.Menu || 
+                      Interface.Page == InterfacePages.Shop) && 
+                      e.KeyCode == Keys.Escape)
+            {
+                Interface.Page = InterfacePages.Game;
+                GameTime.isFreezed = false;
+            }
         }
 
         private void Game_KeyPress(object sender, KeyPressEventArgs e)
@@ -305,6 +318,11 @@ namespace EssenceOfMagic
             else if (e.KeyCode == Keys.S || e.KeyCode.ToString() == "Down") S = false;
             else if (e.KeyCode == Keys.A || e.KeyCode.ToString() == "Left") A = false;
             else if (e.KeyCode == Keys.D || e.KeyCode.ToString() == "Right") D = false;
+        }
+
+        private void Game_MouseMove(object sender, MouseEventArgs e)
+        {
+            GameData.Cursor = e.Location;
         }
     }
 }

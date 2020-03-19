@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Text.Json.Serialization;
 
 namespace EssenceOfMagic
 {
@@ -12,5 +13,8 @@ namespace EssenceOfMagic
         public Texture Texture { get; set; }
         public int Count { get; set; }
         public bool Stackable { get; set; }
+
+        [JsonIgnore]
+        public bool isDragging { get; set; }
     }
 }

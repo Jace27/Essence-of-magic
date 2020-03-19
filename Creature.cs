@@ -255,7 +255,7 @@ namespace EssenceOfMagic
             set { if (value > 0) _watermax = value; }
         }
 
-        public DateTime LastSleep { get; set; }
+        public DateTime LastSleep { get; set; } = DateTime.Now;
 
         private bool isNeedsCounting = false;
         private void _needs()
@@ -270,8 +270,8 @@ namespace EssenceOfMagic
                         while (Vulnarable)
                         {
                             Thread.Sleep(500);
-                            _water--;
-                            _satiety--;
+                            Water--;
+                            Satiety--;
                         }
                         isNeedsCounting = false;
                     });

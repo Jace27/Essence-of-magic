@@ -18,6 +18,8 @@ namespace EssenceOfMagic
         };
         public static Size BlockSize = new Size(64, 64);
         public static Size Window = new Size(960, 640);
+        public delegate void ThreadTransit();
+        public static Point Cursor = new Point(0, 0);
 
         // == ИГРОВЫЕ ФАЙЛЫ ==
         public static string TextureFolder = Environment.CurrentDirectory + "\\Resources\\Textures";

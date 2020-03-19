@@ -98,7 +98,6 @@ namespace EssenceOfMagic
             mGraphics.Resize(Width, Height);
 
             GameData.Window = new Size(Width, Height);
-            InterfacePage.Size = new Size(Width, Height);
         }
         // ============================================================
         public delegate void DrawEventHandler(GLGraphics e);

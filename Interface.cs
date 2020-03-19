@@ -9,10 +9,43 @@ using GLGDIPlus;
 
 namespace EssenceOfMagic
 {
+    public class InterfacePagesCollection
+    {
+        private InterfacePage[] _pages = new InterfacePage[0];
+        public int Length
+        {
+            get { return _pages.Length; }
+        }
+        public InterfacePage this[InterfacePages Page]
+        {
+            get
+            {
+                for (int i = 0; i < _pages.Length; i++)
+                    if (_pages[i].Type == Page)
+                        return _pages[i];
+                return null;
+            }
+            set
+            {
+                for (int i = 0; i < _pages.Length; i++)
+                {
+                    if (_pages[i].Type == Page)
+                    {
+                        _pages[i].Rect = value.Rect;
+                        _pages[i].InterfaceGroups = value.InterfaceGroups;
+                        return;
+                    }
+                }
+                Array.Resize<InterfacePage>(ref _pages, _pages.Length + 1);
+                _pages[_pages.Length - 1] = value;
+                _pages[_pages.Length - 1].Type = Page;
+            }
+        }
+    }
     public static class Interface
     {
         public static InterfacePages Page = InterfacePages.Game;
-        public static InterfacePage[] Pages;
+        public static InterfacePagesCollection Pages;
         public static void Init()
         {
             Bitmap bmp = new Bitmap(GameData.Window.Width, GameData.Window.Height);
@@ -20,37 +53,53 @@ namespace EssenceOfMagic
             bmp.Dispose();
             IMG.SetImageTiles(new System.Collections.Generic.List<RectangleF>() { new RectangleF(0, 0, GameData.Window.Width, GameData.Window.Height) });
 
-            Pages = new InterfacePage[4];
+            Pages = new InterfacePagesCollection();
 
             #region Game
-            Pages[0] = new InterfacePage();
-            Pages[0].Type = InterfacePages.Game;
-            Pages[0].InterfaceGroups = new InterfaceGroup[1]
+            Pages[InterfacePages.Game] = new InterfacePage()
             {
-                new InterfaceGroup()
+                InterfaceGroups = new InterfaceGroup[1]
                 {
-                    Rect = new Rectangle(InterfacePage.Size.Width - 310, InterfacePage.Size.Height - 110, 300, 100),
-                    Back = (Bitmap)Image.FromFile(GameData.TextureFolder + "\\Technical\\health.png"),
-                    Type = IGroupType.HealthBar
+                    new InterfaceGroup()
+                    {
+                        Rect = new Rectangle(GameData.Window.Width - 310, GameData.Window.Height - 110, 300, 100),
+                        Back = (Bitmap)Image.FromFile(GameData.TextureFolder + "\\Technical\\health.png"),
+                        Name = "HealthBar"
+                    }
                 }
             };
             #endregion
 
             #region Menu
-            Pages[1] = new InterfacePage();
-            Pages[1].Type = InterfacePages.Menu;
+            Pages[InterfacePages.Menu] = new InterfacePage()
+            {
+                Type = InterfacePages.Menu,
+                InterfaceGroups = new InterfaceGroup[1]
+                {
+                    new InterfaceGroup()
+                    {
+                        Rect = new Rectangle(100, 100, 300, 50),
+                        Back = new Bitmap(300, 50),
+                        Name = "Выйти из игры"
+                    }
+                }
+            };
 
             #endregion
 
             #region Inventory
-            Pages[2] = new InterfacePage();
-            Pages[2].Type = InterfacePages.Inventory;
+            Pages[InterfacePages.Inventory] = new InterfacePage()
+            {
+
+            };
 
             #endregion
 
             #region Shop
-            Pages[3] = new InterfacePage();
-            Pages[3].Type = InterfacePages.Shop;
+            Pages[InterfacePages.Shop] = new InterfacePage()
+            {
+
+            };
 
             #endregion
 
@@ -65,7 +114,7 @@ namespace EssenceOfMagic
                     
                     if (Owner != null)
                     {
-                        Owner.Invoke(new ThreadTransit(() => { DrawPage(); }));
+                        Owner.Invoke(new GameData.ThreadTransit(() => { Interface.DrawPage(); }));
                     }
 
                     double ms = 1000.0 / FPSlimit;
@@ -91,114 +140,101 @@ namespace EssenceOfMagic
             Bitmap Output = new Bitmap(GameData.Window.Width, GameData.Window.Height);
             using (Graphics gr1 = Graphics.FromImage(Output))
             {
-                InterfacePage temp;
-                for (int i = 0; i < Pages.Length; i++) if (Pages[i].Type == Page) temp = Pages[i];
-                if (temp.Type == InterfacePages.Game)
-                gr1.DrawImage(((GameInterfacePage)temp).GetBMP(), 0, 0, Output.Width, Output.Height);
+                if (Page == InterfacePages.Game)
+                {
+                    InterfacePage page = Pages[InterfacePages.Game];
+                    for (int g = 0; g < page.InterfaceGroups.Length; g++)
+                    {
+                        Bitmap group = new Bitmap(page.InterfaceGroups[g].Rect.Width, page.InterfaceGroups[g].Rect.Height);
+                        using (Graphics gr2 = Graphics.FromImage(group))
+                        {
+                            gr2.DrawImage(page.InterfaceGroups[g].Back, 0, 0, group.Width, group.Height);
+                            if (page.InterfaceGroups[g].Name == "HealthBar")
+                            {
+                                double max, reg; int barw, barh = 10;
+                                #region Health bar
+                                gr2.FillRectangle(Brushes.White, 50, 20, 200, barh);
+                                max = GameData.World.Players[0].HPMax;
+                                reg = GameData.World.Players[0].HP;
+                                barw = (int)Math.Round((reg / max) * 200, 0);
+                                gr2.FillRectangle(Brushes.GreenYellow, 50, 20, barw, barh);
+                                #endregion
+
+                                #region Food bar
+                                gr2.FillRectangle(Brushes.White, 50, 45, 200, barh);
+                                max = GameData.World.Players[0].SatietyMax;
+                                reg = GameData.World.Players[0].Satiety;
+                                barw = (int)Math.Round((reg / max) * 200, 0);
+                                gr2.FillRectangle(Brushes.Yellow, 50, 45, barw, barh);
+                                #endregion
+
+                                #region Water bar
+                                gr2.FillRectangle(Brushes.White, 50, 70, 200, barh);
+                                max = GameData.World.Players[0].WaterMax;
+                                reg = GameData.World.Players[0].Water;
+                                barw = (int)Math.Round((reg / max) * 200, 0);
+                                gr2.FillRectangle(Brushes.Blue, 50, 70, barw, barh);
+                                #endregion
+                            }
+                            else
+                            if (page.InterfaceGroups[g].Name == "Hint")
+                            {
+
+                            }
+                        }
+                        gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
+                    }
+                }
+                else
+                if (Page == InterfacePages.Menu)
+                {
+                    gr1.FillRectangle(new SolidBrush(Color.FromArgb(127, 127, 127, 255)), 0, 0, Output.Width, Output.Height);
+                    InterfacePage page = Pages[InterfacePages.Game];
+                    for (int g = 0; g < page.InterfaceGroups.Length; g++)
+                    {
+                        Bitmap group = new Bitmap(page.InterfaceGroups[g].Rect.Width, page.InterfaceGroups[g].Rect.Height);
+                        using (Graphics gr2 = Graphics.FromImage(group))
+                        {
+                            if (GameData.Cursor.X > page.InterfaceGroups[g].Rect.Left &&
+                                GameData.Cursor.X < page.InterfaceGroups[g].Rect.Right &&
+                                GameData.Cursor.Y > page.InterfaceGroups[g].Rect.Top &&
+                                GameData.Cursor.Y < page.InterfaceGroups[g].Rect.Bottom)
+                                gr2.FillEllipse(new SolidBrush(Color.FromArgb(127, 0, 0, 127)), 0, 0, group.Width, group.Height);
+                            //System.Windows.Forms()
+                        }
+                        gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
+                    }
+                }
             }
             IMG.Free();
             IMG.FromBitmap(Output);
         }
         public static Game Owner;
-        public delegate void ThreadTransit();
     }
 
-    public abstract class InterfacePage
+    public class InterfacePage
     {
-        public static Size Size = new Size(GameData.Window.Width, GameData.Window.Height);
         public InterfaceGroup[] InterfaceGroups { get; set; }
-        private Rectangle _rect = new Rectangle(0, 0, Size.Width, Size.Height);
+        private Rectangle _rect = new Rectangle(0, 0, GameData.Window.Width, GameData.Window.Height);
         public Rectangle Rect
         {
             get { return _rect; }
-            set { _rect = new Rectangle(value.X, value.Y, Size.Width, Size.Height); }
+            set { _rect = new Rectangle(value.X, value.Y, GameData.Window.Width, GameData.Window.Height); }
         }
         public InterfacePages Type { get; set; }
-        public virtual Bitmap GetBMP()
-        {
-            Bitmap buffer1 = new Bitmap(Size.Width, Size.Height);
-            using (Graphics gr1 = Graphics.FromImage(buffer1))
-            {
-                for (int i = 0; i < InterfaceGroups.Length; i++)
-                {
-                    gr1.DrawImage(InterfaceGroups[i].Back, InterfaceGroups[i].Rect);
-                }
-            }
-            return buffer1;
-        }
-    }
-
-    public class GameInterfacePage : InterfacePage
-    {
-        public override Bitmap GetBMP()
-        {
-            Bitmap buffer1 = new Bitmap(Size.Width, Size.Height);
-            using (Graphics gr1 = Graphics.FromImage(buffer1))
-            {
-                for (int i = 0; i < InterfaceGroups.Length; i++)
-                {
-                    Bitmap back = (Bitmap)InterfaceGroups[i].Back.Clone();
-                    using (Graphics gr2 = Graphics.FromImage(back))
-                    {
-                        if (InterfaceGroups[i].Type == IGroupType.HealthBar)
-                        {
-                            double max, reg; int barw;
-                            #region Health bar
-                            gr2.FillRectangle(Brushes.White, 50, 10, 200, 20);
-                            max = GameData.World.Players[0].HPMax;
-                            reg = GameData.World.Players[0].HP;
-                            barw = (int)Math.Round((reg / max) * 200, 0);
-                            gr2.FillRectangle(Brushes.GreenYellow, 50, 10, barw, 20);
-                            #endregion
-
-                            #region Food bar
-                            gr2.FillRectangle(Brushes.White, 50, 40, 200, 20);
-                            max = GameData.World.Players[0].SatietyMax;
-                            reg = GameData.World.Players[0].Satiety;
-                            barw = (int)Math.Round((reg / max) * 200, 0);
-                            gr2.FillRectangle(Brushes.Yellow, 50, 40, barw, 20);
-                            #endregion
-
-                            #region Water bar
-                            gr2.FillRectangle(Brushes.White, 50, 70, 200, 20);
-                            max = GameData.World.Players[0].WaterMax;
-                            reg = GameData.World.Players[0].Water;
-                            barw = (int)Math.Round((reg / max) * 200, 0);
-                            gr2.FillRectangle(Brushes.Blue, 50, 70, barw, 20);
-                            #endregion
-                        }
-                    }
-                    gr1.DrawImage(back, InterfaceGroups[i].Rect);
-                    back.Dispose();
-                }
-            }
-            return buffer1;
-        }
     }
 
     public class InterfaceGroup
     {
-        public IGroupType Type { get; set; } 
+        public InterfaceCell[] Cells { get; set; }
         public Rectangle Rect { get; set; }
         public Bitmap Back { get; set; }
+        public string Name { get; set; }
     }
 
     public class InterfaceCell
     {
         public Item Item { get; set; }
         public Rectangle Rect { get; set; }
-    }
-
-    public enum InterfacePages
-    {
-        Game,
-        Menu,
-        Inventory,
-        Shop,
-        Dialog
-    }
-    public enum IGroupType
-    {
-        HealthBar
     }
 }

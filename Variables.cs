@@ -10,7 +10,5 @@ namespace EssenceOfMagic
     {
         GameObject Player;
         Camera Camera;
-
-        Pages Page = Pages.World;
     }
 }

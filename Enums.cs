@@ -12,9 +12,13 @@ namespace EssenceOfMagic
         Fire, Water, Terra, Air,
         Death, Life, Darkness, Light
     }
-    public enum Pages
+    public enum InterfacePages
     {
-        World, Inventory, Title, Settings
+        Game,
+        Menu,
+        Inventory,
+        Shop,
+        Dialog
     }
     public enum Direction
     {

@@ -506,7 +506,6 @@ A:\EssenceOfMagic\essence-of-magic\bin\Debug\System.Text.Encodings.Web.xml
 A:\EssenceOfMagic\essence-of-magic\bin\Debug\System.Text.Json.xml
 A:\EssenceOfMagic\essence-of-magic\bin\Debug\System.Threading.Tasks.Extensions.xml
 A:\EssenceOfMagic\essence-of-magic\bin\Debug\System.ValueTuple.xml
-A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.csprojAssemblyReference.cache
 A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.exe.config
 A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.Game.resources
 A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.GraphicSurface.resources

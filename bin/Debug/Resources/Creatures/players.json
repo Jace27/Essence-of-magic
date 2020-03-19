@@ -1,7 +1,7 @@
 [
   {
-    "HP": 10,
-    "HPMax": 10,
+    "HP": 200,
+    "HPMax": 200,
     "HPRegen": false,
     "HPRegenSpeed": 1,
     "isDead": false,
