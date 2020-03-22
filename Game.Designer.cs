@@ -17,7 +17,11 @@
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+            try
+            {
+                base.Dispose(disposing);
+            }
+            catch { }
         }
 
         #region Windows Form Designer generated code
@@ -42,6 +46,8 @@
             this.graphicSurface1.TabIndex = 0;
             this.graphicSurface1.VSync = false;
             this.graphicSurface1.OnDraw += new EssenceOfMagic.GraphicSurface.DrawEventHandler(this.GraphicSurface1_OnDraw);
+            this.graphicSurface1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Game_MouseMove);
+            this.graphicSurface1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.GraphicSurface1_MouseClick);
             // 
             // Game
             // 
@@ -58,7 +64,6 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Game_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Game_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Game_KeyUp);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Game_MouseMove);
             this.ResumeLayout(false);
         }
 

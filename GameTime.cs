@@ -35,23 +35,27 @@ namespace EssenceOfMagic
                 isFreezed = false; 
             });
         }
-        public async static void WaitForTick()
+        public static void WaitForTick()
         {
             int curtick = Tick;
-            await Task.Run(() =>
+            Task task = Task.Run(() =>
             {
                 while (curtick == Tick)
                     Thread.Sleep(10);
             });
+            task.Wait();
+            task.Dispose();
         }
-        public async static void WaitForSecond()
+        public static void WaitForSecond()
         {
             int cursec = Second;
-            await Task.Run(() =>
+            Task task = Task.Run(() =>
             {
                 while (cursec == Second)
                     Thread.Sleep(10);
             });
+            task.Wait();
+            task.Dispose();
         }
         public static int Tick = 0;
         public static int Second = 0;

@@ -644,3 +644,4 @@ H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.csproj.GenerateResource.cach
 H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.csproj.CopyComplete
 H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.exe
 H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.pdb
+A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.csprojAssemblyReference.cache

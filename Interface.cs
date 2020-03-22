@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows.Forms;
 using GLGDIPlus;
 
 namespace EssenceOfMagic
@@ -46,6 +47,8 @@ namespace EssenceOfMagic
     {
         public static InterfacePages Page = InterfacePages.Game;
         public static InterfacePagesCollection Pages;
+        public static InterfaceGroup Question;
+        public static InterfaceCaption[] Captions;
         public static void Init()
         {
             Bitmap bmp = new Bitmap(GameData.Window.Width, GameData.Window.Height);
@@ -80,7 +83,55 @@ namespace EssenceOfMagic
                     {
                         Rect = new Rectangle(100, 100, 300, 50),
                         Back = new Bitmap(300, 50),
-                        Name = "Выйти из игры"
+                        Name = "Выйти из игры",
+                        Action = () =>
+                        {
+                            Question = new InterfaceGroup();
+                            {
+                                Question.Rect = new Rectangle((GameData.Window.Width - 300) / 2, (GameData.Window.Height - 200) / 2, 300, 200);
+                                Question.Back = new Bitmap(300, 200);
+                                Question.Name = "";
+                                Question.Captions = new InterfaceCaption[4];
+                                {
+                                    Question.Captions[0] = new InterfaceCaption()
+                                    {
+                                        Text = "Сохранить игру?",
+                                        HoverColor = Color.White,
+                                        Rect = new Rectangle((Question.Rect.Width - 200) / 2, (Question.Rect.Height - 30) / 2 - 50, 200, 30)
+                                    };
+                                    Question.Captions[1] = new InterfaceCaption()
+                                    {
+                                        Text = "Да",
+                                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 - 75, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
+                                        Action = () =>
+                                        {
+                                            GameData.Save();
+                                            Question = null;
+                                            Application.Exit();
+                                        }
+                                    };
+                                    Question.Captions[2] = new InterfaceCaption()
+                                    {
+                                        Text = "Нет",
+                                        Rect = new Rectangle((Question.Rect.Width - 75) / 2, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
+                                        Action = () =>
+                                        {
+                                            Question = null;
+                                            Application.Exit();
+                                        }
+                                    };
+                                    Question.Captions[3] = new InterfaceCaption()
+                                    {
+                                        Text = "Отмена",
+                                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 + 75, (Question.Rect.Height - 30) / 2 + 50, 100, 30),
+                                        Action = () =>
+                                        {
+                                            Question = null;
+                                        }
+                                    };
+                                }
+                            }
+                        }
                     }
                 }
             };
@@ -114,7 +165,7 @@ namespace EssenceOfMagic
                     
                     if (Owner != null)
                     {
-                        Owner.Invoke(new GameData.ThreadTransit(() => { Interface.DrawPage(); }));
+                        Owner.Invoke(new GameData.ThreadTransit(() => { try { Interface.DrawPage(); } catch { } }));
                     }
 
                     double ms = 1000.0 / FPSlimit;
@@ -140,6 +191,7 @@ namespace EssenceOfMagic
             Bitmap Output = new Bitmap(GameData.Window.Width, GameData.Window.Height);
             using (Graphics gr1 = Graphics.FromImage(Output))
             {
+                gr1.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 if (Page == InterfacePages.Game)
                 {
                     InterfacePage page = Pages[InterfacePages.Game];
@@ -148,6 +200,7 @@ namespace EssenceOfMagic
                         Bitmap group = new Bitmap(page.InterfaceGroups[g].Rect.Width, page.InterfaceGroups[g].Rect.Height);
                         using (Graphics gr2 = Graphics.FromImage(group))
                         {
+                            gr2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                             gr2.DrawImage(page.InterfaceGroups[g].Back, 0, 0, group.Width, group.Height);
                             if (page.InterfaceGroups[g].Name == "HealthBar")
                             {
@@ -181,35 +234,116 @@ namespace EssenceOfMagic
                             {
 
                             }
+
+                            if (page.InterfaceGroups[g].Captions != null)
+                            {
+                                for (int c = 0; c < page.InterfaceGroups[g].Captions.Length; c++)
+                                {
+                                    InterfaceCaption cap = page.InterfaceGroups[g].Captions[c];
+                                    if (!cap.Hovered)
+                                        TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.Color, cap.Flags);
+                                    else
+                                        TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.HoverColor, cap.Flags);
+                                }
+                            }
                         }
                         gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
+                        group.Dispose();
                     }
                 }
                 else
                 if (Page == InterfacePages.Menu)
                 {
-                    gr1.FillRectangle(new SolidBrush(Color.FromArgb(127, 127, 127, 255)), 0, 0, Output.Width, Output.Height);
-                    InterfacePage page = Pages[InterfacePages.Game];
+                    gr1.FillRectangle(new SolidBrush(Color.FromArgb(192, 32, 32, 32)), 0, 0, Output.Width, Output.Height);
+                    InterfacePage page = Pages[InterfacePages.Menu];
                     for (int g = 0; g < page.InterfaceGroups.Length; g++)
                     {
                         Bitmap group = new Bitmap(page.InterfaceGroups[g].Rect.Width, page.InterfaceGroups[g].Rect.Height);
                         using (Graphics gr2 = Graphics.FromImage(group))
                         {
+                            Color color = Color.White;
                             if (GameData.Cursor.X > page.InterfaceGroups[g].Rect.Left &&
                                 GameData.Cursor.X < page.InterfaceGroups[g].Rect.Right &&
                                 GameData.Cursor.Y > page.InterfaceGroups[g].Rect.Top &&
                                 GameData.Cursor.Y < page.InterfaceGroups[g].Rect.Bottom)
-                                gr2.FillEllipse(new SolidBrush(Color.FromArgb(127, 0, 0, 127)), 0, 0, group.Width, group.Height);
-                            //System.Windows.Forms()
+                                color = Color.FromArgb(255, 73, 99, 217);
+                            gr2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                            TextRenderer.DrawText(
+                                gr2, 
+                                page.InterfaceGroups[g].Name, 
+                                new Font(GameData.Font, FontStyle.Bold), 
+                                new Rectangle(0, 0, group.Width, group.Height), 
+                                color, 
+                                GameData.Flags
+                            );
                         }
                         gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
+                        group.Dispose();
+                    }
+                }
+
+                if (Question != null)
+                {
+                    Bitmap question = new Bitmap(Question.Rect.Width, Question.Rect.Height);
+                    using (Graphics gr2 = Graphics.FromImage(question))
+                    {
+                        gr2.Clear(Color.FromArgb(50, 50, 100));
+                        gr2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                        if (Question.Captions != null)
+                        {
+                            for (int c = 0; c < Question.Captions.Length; c++)
+                            {
+                                InterfaceCaption cap = Question.Captions[c];
+                                TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.Color, cap.Flags);
+                            }
+                        }
+                    }
+                    gr1.DrawImage(question, Question.Rect);
+                    question.Dispose();
+                }
+
+                if (Captions != null)
+                {
+                    for (int c = 0; c < Captions.Length; c++)
+                    {
+                        InterfaceCaption cap = Captions[c];
+                        TextRenderer.DrawText(gr1, cap.Text, cap.Font, cap.Rect, cap.Color, cap.Flags);
                     }
                 }
             }
             IMG.Free();
             IMG.FromBitmap(Output);
+            Output.Dispose();
+        }
+        public static void Click(Point e)
+        {
+            InterfacePage page = Pages[Interface.Page];
+            for (int g = 0; g < page.InterfaceGroups.Length; g++)
+            {
+                if (e.X > page.InterfaceGroups[g].Rect.Left &&
+                    e.X < page.InterfaceGroups[g].Rect.Right &&
+                    e.Y > page.InterfaceGroups[g].Rect.Top &&
+                    e.Y < page.InterfaceGroups[g].Rect.Bottom)
+                {
+                    page.InterfaceGroups[g].Click(new Point(e.X - page.InterfaceGroups[g].Rect.Left, e.Y - page.InterfaceGroups[g].Rect.Top));
+                }
+            }
+            if (Question != null)
+            {
+                if (e.X > Question.Rect.Left &&
+                    e.X < Question.Rect.Right &&
+                    e.Y > Question.Rect.Top &&
+                    e.Y < Question.Rect.Bottom)
+                {
+                    Question.Click(new Point(e.X - Question.Rect.Left, e.Y - Question.Rect.Top));
+                }
+            }
         }
         public static Game Owner;
+
+        public static Item DraggingItem;
+        public static InterfaceCell StartCell;
+        public static InterfaceCell EndCell;
     }
 
     public class InterfacePage
@@ -222,6 +356,7 @@ namespace EssenceOfMagic
             set { _rect = new Rectangle(value.X, value.Y, GameData.Window.Width, GameData.Window.Height); }
         }
         public InterfacePages Type { get; set; }
+        public InterfaceCaption[] Captions { get; set; }
     }
 
     public class InterfaceGroup
@@ -230,11 +365,76 @@ namespace EssenceOfMagic
         public Rectangle Rect { get; set; }
         public Bitmap Back { get; set; }
         public string Name { get; set; }
+        public Action Action { get; set; }
+        public InterfaceCaption[] Captions { get; set; }
+        public void Click(Point e)
+        {
+            if (e.X >= 0 && e.X < Rect.Width &&
+                e.Y >= 0 && e.Y < Rect.Height)
+            {
+                Action?.Invoke();
+                if (Captions != null)
+                {
+                    for (int c = 0; c < Captions.Length; c++)
+                    {
+                        if (e.X > Captions[c].Rect.Left &&
+                            e.X < Captions[c].Rect.Right &&
+                            e.Y > Captions[c].Rect.Top &&
+                            e.Y < Captions[c].Rect.Bottom)
+                        {
+                            Captions[c].Action?.Invoke();
+                            Captions[c].Hovered = true;
+                        }
+                        else
+                        {
+                            Captions[c].Hovered = false;
+                        }
+                    }
+                }
+                if (Cells != null)
+                {
+                    for (int c = 0; c < Cells.Length; c++)
+                    {
+                        if (e.X > Cells[c].Rect.Left &&
+                            e.X < Cells[c].Rect.Right &&
+                            e.Y > Cells[c].Rect.Top &&
+                            e.Y < Cells[c].Rect.Bottom)
+                        {
+                            Cells[c].Action?.Invoke();
+                            Cells[c].Hovered = true;
+                        }
+                        else
+                        {
+                            Cells[c].Hovered = false;
+                        }
+                    }
+                }
+            }
+        }
+        public void Dispose()
+        {
+            Back.Dispose();
+        }
     }
 
     public class InterfaceCell
     {
         public Item Item { get; set; }
         public Rectangle Rect { get; set; }
+        public InterfaceCaption[] Captions { get; set; }
+        public bool Hovered { get; set; }
+        public Action Action { get; set; }
+    }
+
+    public class InterfaceCaption
+    {
+        public string Text { get; set; } = "";
+        public Rectangle Rect { get; set; } = new Rectangle(0, 0, 100, 50);
+        public Font Font { get; set; } = GameData.Font;
+        public Color Color { get; set; } = Color.White;
+        public Color HoverColor { get; set; } = Color.FromArgb(255, 73, 99, 217);
+        public bool Hovered { get; set; } = false;
+        public TextFormatFlags Flags { get; set; } = GameData.Flags;
+        public Action Action { get; set; }
     }
 }

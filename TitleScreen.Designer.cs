@@ -69,6 +69,7 @@
             this.NewGameBtn.TabIndex = 2;
             this.NewGameBtn.Text = "Новая игра";
             this.NewGameBtn.UseVisualStyleBackColor = false;
+            this.NewGameBtn.Click += new System.EventHandler(this.NewGameBtn_Click);
             this.NewGameBtn.Paint += new System.Windows.Forms.PaintEventHandler(this.Btns_Paint);
             this.NewGameBtn.MouseEnter += new System.EventHandler(this.Btns_MouseEnter);
             this.NewGameBtn.MouseLeave += new System.EventHandler(this.Btns_MouseLeave);

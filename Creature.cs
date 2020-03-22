@@ -119,8 +119,11 @@ namespace EssenceOfMagic
                     _hpregen = true;
                     while (isAlive && _hpregen)
                     {
-                        DateTime Old = DateTime.Now;
-                        if (HPRegen) HP += (DateTime.Now - Old).TotalSeconds * HPRegenSpeed;
+                        if (!GameTime.isFreezed)
+                        {
+                            DateTime Old = DateTime.Now;
+                            if (HPRegen) HP += (DateTime.Now - Old).TotalSeconds * HPRegenSpeed;
+                        }
                         Thread.Sleep(1000);
                     }
                     _hpregen = false;
@@ -186,7 +189,7 @@ namespace EssenceOfMagic
                            _water == 0 || 
                            (DateTime.Now - LastSleep).TotalMilliseconds > (GameData.DayLength.TotalMilliseconds * 2)))
                     {
-                        HP -= 2;
+                        if (!GameTime.isFreezed) HP -= 2;
                         Thread.Sleep(1000);
                     }
                 });
@@ -270,8 +273,11 @@ namespace EssenceOfMagic
                         while (Vulnarable)
                         {
                             Thread.Sleep(500);
-                            Water--;
-                            Satiety--;
+                            if (!GameTime.isFreezed)
+                            {
+                                Water--;
+                                Satiety--;
+                            }
                         }
                         isNeedsCounting = false;
                     });

@@ -16,5 +16,7 @@ namespace EssenceOfMagic
 
         [JsonIgnore]
         public bool isDragging { get; set; }
+        [JsonIgnore]
+        public bool isDraggable { get; set; }
     }
 }

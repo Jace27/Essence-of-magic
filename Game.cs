@@ -201,8 +201,6 @@ namespace EssenceOfMagic
 
             for (int c = 0; c < OCP.Length; c++)
             {
-                int cl = -1;
-
                 Point ol = new Point(
                     Convert.ToInt32(
                         WorldToWindow.X + OCP[c].Location.X
@@ -212,7 +210,7 @@ namespace EssenceOfMagic
                     )
                 );
 
-                cl = UT.Length;
+                int cl = UT.Length;
 
                 Array.Resize<UsingTexture>(ref UT, UT.Length + 1);
 
@@ -291,19 +289,6 @@ namespace EssenceOfMagic
                     Task.Run(() => { Player.Move(direction); });
                 }
             }
-            if (Interface.Page == InterfacePages.Game && e.KeyCode == Keys.Escape)
-            {
-                Interface.Page = InterfacePages.Menu;
-                GameTime.isFreezed = true;
-            }
-            else if ((Interface.Page == InterfacePages.Inventory || 
-                      Interface.Page == InterfacePages.Menu || 
-                      Interface.Page == InterfacePages.Shop) && 
-                      e.KeyCode == Keys.Escape)
-            {
-                Interface.Page = InterfacePages.Game;
-                GameTime.isFreezed = false;
-            }
         }
 
         private void Game_KeyPress(object sender, KeyPressEventArgs e)
@@ -318,11 +303,28 @@ namespace EssenceOfMagic
             else if (e.KeyCode == Keys.S || e.KeyCode.ToString() == "Down") S = false;
             else if (e.KeyCode == Keys.A || e.KeyCode.ToString() == "Left") A = false;
             else if (e.KeyCode == Keys.D || e.KeyCode.ToString() == "Right") D = false;
+
+            if (e.KeyCode == Keys.Escape && Interface.Page != InterfacePages.Game && Interface.Question == null)
+            {
+                Interface.Page = InterfacePages.Game;
+                GameTime.isFreezed = false;
+            }
+            else
+            if (e.KeyCode == Keys.Escape && Interface.Page == InterfacePages.Game && Interface.Question == null)
+            {
+                Interface.Page = InterfacePages.Menu;
+                GameTime.isFreezed = true;
+            }
         }
 
         private void Game_MouseMove(object sender, MouseEventArgs e)
         {
             GameData.Cursor = e.Location;
+        }
+
+        private void GraphicSurface1_MouseClick(object sender, MouseEventArgs e)
+        {
+            Interface.Click(e.Location);
         }
     }
 }

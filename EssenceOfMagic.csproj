@@ -113,6 +113,7 @@
     </Compile>
     <Compile Include="ImageWrapper.cs" />
     <Compile Include="Interface.cs" />
+    <Compile Include="Messages.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

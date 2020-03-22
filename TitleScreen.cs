@@ -42,5 +42,12 @@ namespace EssenceOfMagic
             Close();
             Application.Exit();
         }
+
+        private void NewGameBtn_Click(object sender, EventArgs e)
+        {
+            Game Game = new Game();
+            Game.Show();
+            this.Hide();
+        }
     }
 }

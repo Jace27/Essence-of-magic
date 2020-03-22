@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Text.Json;
 using System.IO;
+using System.Windows.Forms;
 
 namespace EssenceOfMagic
 {
@@ -20,6 +21,19 @@ namespace EssenceOfMagic
         public static Size Window = new Size(960, 640);
         public delegate void ThreadTransit();
         public static Point Cursor = new Point(0, 0);
+
+        public static Font Font = new Font("Segoe Script", 14f, FontStyle.Regular);
+        public static TextFormatFlags Flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak;
+
+        public static void Save()
+        {
+
+        }
+
+        public static void Exit()
+        {
+            Application.Exit();
+        }
 
         // == ИГРОВЫЕ ФАЙЛЫ ==
         public static string TextureFolder = Environment.CurrentDirectory + "\\Resources\\Textures";
