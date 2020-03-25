@@ -60,7 +60,7 @@ namespace EssenceOfMagic
         public static int Tick = 0;
         public static int Second = 0;
         public static int TimeDelay = 40;
-        public static bool isFreezed = false;
+        public static bool isFreezed { get; set; } = false;
         private static Task Ticker;
 
         public delegate void TickEventHandler();

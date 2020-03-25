@@ -29,10 +29,9 @@ namespace EssenceOfMagic
         {
 
         }
-
-        public static void Exit()
+        public static void Load()
         {
-            Application.Exit();
+
         }
 
         // == ИГРОВЫЕ ФАЙЛЫ ==

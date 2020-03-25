@@ -238,8 +238,10 @@ namespace EssenceOfMagic
 
             e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
             e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
-            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 60));
-            AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024) + "МБ";
+            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 73));
+            AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024) + " МБ";
+            if (GameTime.isFreezed)
+                AddedInfo += "\nfreezed";
             e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
 
             e.DrawMultiImage(Interface.IMG);
@@ -320,6 +322,7 @@ namespace EssenceOfMagic
         private void Game_MouseMove(object sender, MouseEventArgs e)
         {
             GameData.Cursor = e.Location;
+            Interface.MouseMove(e.Location);
         }
 
         private void GraphicSurface1_MouseClick(object sender, MouseEventArgs e)

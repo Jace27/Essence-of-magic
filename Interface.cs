@@ -49,6 +49,102 @@ namespace EssenceOfMagic
         public static InterfacePagesCollection Pages;
         public static InterfaceGroup Question;
         public static InterfaceCaption[] Captions;
+        #region Question templates
+        public static void Question_ExitSaveGame()
+        {
+            Question = new InterfaceGroup();
+            {
+                Question.Rect = new Rectangle((GameData.Window.Width - 300) / 2, (GameData.Window.Height - 200) / 2, 300, 200);
+                Question.Back = new Bitmap(300, 200);
+                Question.Captions = new InterfaceCaption[4];
+                {
+                    Question.Captions[0] = new InterfaceCaption()
+                    {
+                        Text = "Сохранить игру?",
+                        HoverColor = Color.White,
+                        Rect = new Rectangle((Question.Rect.Width - 200) / 2, (Question.Rect.Height - 30) / 2 - 50, 200, 30)
+                    };
+                    Question.Captions[1] = new InterfaceCaption()
+                    {
+                        Text = "Да",
+                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 - 75, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
+                        Action = () =>
+                        {
+                            GameData.Save();
+                            Question = null;
+                            Application.Exit();
+                        }
+                    };
+                    Question.Captions[2] = new InterfaceCaption()
+                    {
+                        Text = "Нет",
+                        Rect = new Rectangle((Question.Rect.Width - 75) / 2, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
+                        Action = () =>
+                        {
+                            Question = null;
+                            Application.Exit();
+                        }
+                    };
+                    Question.Captions[3] = new InterfaceCaption()
+                    {
+                        Text = "Отмена",
+                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 + 75, (Question.Rect.Height - 30) / 2 + 50, 100, 30),
+                        Action = () =>
+                        {
+                            Question = null;
+                        }
+                    };
+                }
+            }
+        }
+        public static void Question_LoadSaveGame()
+        {
+            Question = new InterfaceGroup();
+            {
+                Question.Rect = new Rectangle((GameData.Window.Width - 300) / 2, (GameData.Window.Height - 200) / 2, 300, 200);
+                Question.Back = new Bitmap(300, 200);
+                Question.Captions = new InterfaceCaption[4];
+                {
+                    Question.Captions[0] = new InterfaceCaption()
+                    {
+                        Text = "Сохранить игру?",
+                        HoverColor = Color.White,
+                        Rect = new Rectangle((Question.Rect.Width - 200) / 2, (Question.Rect.Height - 30) / 2 - 50, 200, 30)
+                    };
+                    Question.Captions[1] = new InterfaceCaption()
+                    {
+                        Text = "Да",
+                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 - 75, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
+                        Action = () =>
+                        {
+                            GameData.Save();
+                            GameData.Load();
+                            Question = null;
+                        }
+                    };
+                    Question.Captions[2] = new InterfaceCaption()
+                    {
+                        Text = "Нет",
+                        Rect = new Rectangle((Question.Rect.Width - 75) / 2, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
+                        Action = () =>
+                        {
+                            GameData.Load();
+                            Question = null;
+                        }
+                    };
+                    Question.Captions[3] = new InterfaceCaption()
+                    {
+                        Text = "Отмена",
+                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 + 75, (Question.Rect.Height - 30) / 2 + 50, 100, 30),
+                        Action = () =>
+                        {
+                            Question = null;
+                        }
+                    };
+                }
+            }
+        }
+        #endregion
         public static void Init()
         {
             Bitmap bmp = new Bitmap(GameData.Window.Width, GameData.Window.Height);
@@ -67,7 +163,7 @@ namespace EssenceOfMagic
                     {
                         Rect = new Rectangle(GameData.Window.Width - 310, GameData.Window.Height - 110, 300, 100),
                         Back = (Bitmap)Image.FromFile(GameData.TextureFolder + "\\Technical\\health.png"),
-                        Name = "HealthBar"
+                        ID = "HealthBar"
                     }
                 }
             };
@@ -77,58 +173,65 @@ namespace EssenceOfMagic
             Pages[InterfacePages.Menu] = new InterfacePage()
             {
                 Type = InterfacePages.Menu,
-                InterfaceGroups = new InterfaceGroup[1]
+                InterfaceGroups = new InterfaceGroup[4]
                 {
                     new InterfaceGroup()
                     {
-                        Rect = new Rectangle(100, 100, 300, 50),
+                        Rect = new Rectangle(100, 100 + 50 * 0, 300, 50),
                         Back = new Bitmap(300, 50),
-                        Name = "Выйти из игры",
-                        Action = () =>
+                        Captions = new InterfaceCaption[1]
                         {
-                            Question = new InterfaceGroup();
+                            new InterfaceCaption()
                             {
-                                Question.Rect = new Rectangle((GameData.Window.Width - 300) / 2, (GameData.Window.Height - 200) / 2, 300, 200);
-                                Question.Back = new Bitmap(300, 200);
-                                Question.Name = "";
-                                Question.Captions = new InterfaceCaption[4];
+                                Text = "Сохранить игру",
+                                Rect = new Rectangle(0, 0, 300, 50),
+                                Action = () => { GameData.Save(); }
+                            }
+                        }
+                    },
+                    new InterfaceGroup()
+                    {
+                        Rect = new Rectangle(100, 100 + 50 * 1, 300, 50),
+                        Back = new Bitmap(300, 50),
+                        Captions = new InterfaceCaption[1]
+                        {
+                            new InterfaceCaption()
+                            {
+                                Text = "Загрузить игру",
+                                Rect = new Rectangle(0, 0, 300, 50),
+                                Action = () =>
                                 {
-                                    Question.Captions[0] = new InterfaceCaption()
-                                    {
-                                        Text = "Сохранить игру?",
-                                        HoverColor = Color.White,
-                                        Rect = new Rectangle((Question.Rect.Width - 200) / 2, (Question.Rect.Height - 30) / 2 - 50, 200, 30)
-                                    };
-                                    Question.Captions[1] = new InterfaceCaption()
-                                    {
-                                        Text = "Да",
-                                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 - 75, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
-                                        Action = () =>
-                                        {
-                                            GameData.Save();
-                                            Question = null;
-                                            Application.Exit();
-                                        }
-                                    };
-                                    Question.Captions[2] = new InterfaceCaption()
-                                    {
-                                        Text = "Нет",
-                                        Rect = new Rectangle((Question.Rect.Width - 75) / 2, (Question.Rect.Height - 30) / 2 + 50, 75, 30),
-                                        Action = () =>
-                                        {
-                                            Question = null;
-                                            Application.Exit();
-                                        }
-                                    };
-                                    Question.Captions[3] = new InterfaceCaption()
-                                    {
-                                        Text = "Отмена",
-                                        Rect = new Rectangle((Question.Rect.Width - 75) / 2 + 75, (Question.Rect.Height - 30) / 2 + 50, 100, 30),
-                                        Action = () =>
-                                        {
-                                            Question = null;
-                                        }
-                                    };
+                                    Interface.Question_LoadSaveGame();
+                                }
+                            }
+                        }
+                    },
+                    new InterfaceGroup()
+                    {
+                        Rect = new Rectangle(100, 100 + 50 * 2, 300, 50),
+                        Back = new Bitmap(300, 50),
+                        Captions = new InterfaceCaption[1]
+                        {
+                            new InterfaceCaption()
+                            {
+                                Text = "Настройки",
+                                Rect = new Rectangle(0, 0, 300, 50)
+                            }
+                        }
+                    },
+                    new InterfaceGroup()
+                    {
+                        Rect = new Rectangle(100, 100 + 50 * 3, 300, 50),
+                        Back = new Bitmap(300, 50),
+                        Captions = new InterfaceCaption[1]
+                        {
+                            new InterfaceCaption()
+                            {
+                                Text = "Выйти из игры",
+                                Rect = new Rectangle(0, 0, 300, 50),
+                                Action = () =>
+                                {
+                                    Interface.Question_ExitSaveGame();
                                 }
                             }
                         }
@@ -197,15 +300,17 @@ namespace EssenceOfMagic
                     InterfacePage page = Pages[InterfacePages.Game];
                     for (int g = 0; g < page.InterfaceGroups.Length; g++)
                     {
-                        Bitmap group = new Bitmap(page.InterfaceGroups[g].Rect.Width, page.InterfaceGroups[g].Rect.Height);
+                        InterfaceGroup gr = page.InterfaceGroups[g];
+                        Bitmap group = new Bitmap(gr.Rect.Width, gr.Rect.Height);
                         using (Graphics gr2 = Graphics.FromImage(group))
                         {
                             gr2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                            gr2.DrawImage(page.InterfaceGroups[g].Back, 0, 0, group.Width, group.Height);
-                            if (page.InterfaceGroups[g].Name == "HealthBar")
+                            gr2.DrawImage(gr.Back, 0, 0, group.Width, group.Height);
+                            if (gr.ID == "HealthBar")
                             {
                                 double max, reg; int barw, barh = 10;
                                 #region Health bar
+                                gr2.DrawImage(Image.FromFile(GameData.TextureFolder + "\\Technical\\hp.png"), 260, 15, 20, 20);
                                 gr2.FillRectangle(Brushes.White, 50, 20, 200, barh);
                                 max = GameData.World.Players[0].HPMax;
                                 reg = GameData.World.Players[0].HP;
@@ -214,6 +319,7 @@ namespace EssenceOfMagic
                                 #endregion
 
                                 #region Food bar
+                                gr2.DrawImage(Image.FromFile(GameData.TextureFolder + "\\Technical\\satiety.png"), 260, 40, 20, 20);
                                 gr2.FillRectangle(Brushes.White, 50, 45, 200, barh);
                                 max = GameData.World.Players[0].SatietyMax;
                                 reg = GameData.World.Players[0].Satiety;
@@ -222,6 +328,7 @@ namespace EssenceOfMagic
                                 #endregion
 
                                 #region Water bar
+                                gr2.DrawImage(Image.FromFile(GameData.TextureFolder + "\\Technical\\water.png"), 260, 65, 20, 20);
                                 gr2.FillRectangle(Brushes.White, 50, 70, 200, barh);
                                 max = GameData.World.Players[0].WaterMax;
                                 reg = GameData.World.Players[0].Water;
@@ -230,9 +337,19 @@ namespace EssenceOfMagic
                                 #endregion
                             }
                             else
-                            if (page.InterfaceGroups[g].Name == "Hint")
+                            if (gr.ID == "Hint")
                             {
-
+                                gr2.DrawImage(gr.Back, gr.Rect);
+                                for (int c = 0; c < gr.Captions.Length; c++)
+                                {
+                                    TextRenderer.DrawText(
+                                        gr2, 
+                                        gr.Captions[c].Text, 
+                                        gr.Captions[c].Font, 
+                                        gr.Captions[c].Rect, 
+                                        gr.Captions[c].Color, 
+                                        gr.Captions[c].Flags);
+                                }
                             }
 
                             if (page.InterfaceGroups[g].Captions != null)
@@ -240,7 +357,7 @@ namespace EssenceOfMagic
                                 for (int c = 0; c < page.InterfaceGroups[g].Captions.Length; c++)
                                 {
                                     InterfaceCaption cap = page.InterfaceGroups[g].Captions[c];
-                                    if (!cap.Hovered)
+                                    if (!cap.Hovered || cap.Action == null)
                                         TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.Color, cap.Flags);
                                     else
                                         TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.HoverColor, cap.Flags);
@@ -249,6 +366,7 @@ namespace EssenceOfMagic
                         }
                         gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
                         group.Dispose();
+                        group = null;
                     }
                 }
                 else
@@ -258,27 +376,23 @@ namespace EssenceOfMagic
                     InterfacePage page = Pages[InterfacePages.Menu];
                     for (int g = 0; g < page.InterfaceGroups.Length; g++)
                     {
-                        Bitmap group = new Bitmap(page.InterfaceGroups[g].Rect.Width, page.InterfaceGroups[g].Rect.Height);
-                        using (Graphics gr2 = Graphics.FromImage(group))
+                        InterfaceGroup gr = page.InterfaceGroups[g];
+                        if (gr.Captions != null)
                         {
-                            Color color = Color.White;
-                            if (GameData.Cursor.X > page.InterfaceGroups[g].Rect.Left &&
-                                GameData.Cursor.X < page.InterfaceGroups[g].Rect.Right &&
-                                GameData.Cursor.Y > page.InterfaceGroups[g].Rect.Top &&
-                                GameData.Cursor.Y < page.InterfaceGroups[g].Rect.Bottom)
-                                color = Color.FromArgb(255, 73, 99, 217);
-                            gr2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                            TextRenderer.DrawText(
-                                gr2, 
-                                page.InterfaceGroups[g].Name, 
-                                new Font(GameData.Font, FontStyle.Bold), 
-                                new Rectangle(0, 0, group.Width, group.Height), 
-                                color, 
-                                GameData.Flags
-                            );
+                            Bitmap group = new Bitmap(gr.Rect.Width, gr.Rect.Height);
+                            using (Graphics gr2 = Graphics.FromImage(group))
+                            {
+                                for (int c = 0; c < gr.Captions.Length; c++)
+                                {
+                                    if (gr.Captions[c].Hovered && gr.Captions[c].Action != null)
+                                        TextRenderer.DrawText(gr2, gr.Captions[c].Text, gr.Captions[c].Font, gr.Captions[c].Rect, gr.Captions[c].HoverColor, gr.Captions[c].Flags);
+                                    else
+                                        TextRenderer.DrawText(gr2, gr.Captions[c].Text, gr.Captions[c].Font, gr.Captions[c].Rect, gr.Captions[c].Color, gr.Captions[c].Flags);
+                                }
+                            }
+                            gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
+                            group.Dispose();
                         }
-                        gr1.DrawImage(group, page.InterfaceGroups[g].Rect);
-                        group.Dispose();
                     }
                 }
 
@@ -294,7 +408,10 @@ namespace EssenceOfMagic
                             for (int c = 0; c < Question.Captions.Length; c++)
                             {
                                 InterfaceCaption cap = Question.Captions[c];
-                                TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.Color, cap.Flags);
+                                if (cap.Hovered && cap.Action != null)
+                                    TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.HoverColor, cap.Flags);
+                                else
+                                    TextRenderer.DrawText(gr2, cap.Text, cap.Font, cap.Rect, cap.Color, cap.Flags);
                             }
                         }
                     }
@@ -339,11 +456,78 @@ namespace EssenceOfMagic
                 }
             }
         }
+        public static void MouseMove(Point e)
+        {
+            InterfacePage page = Pages[Interface.Page];
+            for (int g = 0; g < page.InterfaceGroups.Length; g++)
+            {
+                page.InterfaceGroups[g].MouseMove(new Point(e.X - page.InterfaceGroups[g].Rect.Left, e.Y - page.InterfaceGroups[g].Rect.Top));
+            }
+            if (Question != null)
+            {
+                Question.MouseMove(new Point(e.X - Question.Rect.Left, e.Y - Question.Rect.Top));
+            }
+        }
+        public static void Hint(string Header, string Text)
+        {
+            if (Page != InterfacePages.Menu)
+            {
+                GameTime.isFreezed = true;
+                InterfacePage page = Pages[Page];
+                for (int i = 0; i < page.InterfaceGroups.Length; i++)
+                    if (page.InterfaceGroups[i].ID == "Hint")
+                        return;
+                InterfaceGroup[] newgroups = new InterfaceGroup[page.InterfaceGroups.Length + 1];
+                for (int i = 0; i < page.InterfaceGroups.Length; i++)
+                    newgroups[i] = page.InterfaceGroups[i];
+                newgroups[newgroups.Length - 1] = new InterfaceGroup()
+                {
+                    ID = "Hint",
+                    Back = (Bitmap)Image.FromFile(GameData.TextureFolder + "\\Technical\\hint.png"),
+                    Captions = new InterfaceCaption[2]
+                    {
+                        new InterfaceCaption()
+                        {
+                            Text = Header,
+                            Rect = new Rectangle(60, 30, HintRectangle.Width - 120, 40),
+                            Font = new Font(GameData.Font.FontFamily, 24f, FontStyle.Bold),
+                            Color = Color.Black
+                        },
+                        new InterfaceCaption()
+                        {
+                            Text = Text,
+                            Rect = new Rectangle(60, 70, HintRectangle.Width - 120, HintRectangle.Height - 80),
+                            Color = Color.FromArgb(24,24,24),
+                            Flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak
+                        }
+                    },
+                    Action = () =>
+                    {
+                        GameTime.isFreezed = false;
+                        InterfaceGroup[] newgr = new InterfaceGroup[page.InterfaceGroups.Length - 1];
+                        int i1 = 0;
+                        for (int i2 = 0; i2 < page.InterfaceGroups.Length; i2++)
+                        {
+                            if (page.InterfaceGroups[i2].ID != "Hint")
+                            {
+                                newgr[i1] = page.InterfaceGroups[i2];
+                                i1++;
+                            }
+                        }
+                        page.InterfaceGroups = newgr;
+                    },
+                    Rect = HintRectangle
+                };
+                page.InterfaceGroups = newgroups;
+            }
+        }
         public static Game Owner;
 
         public static Item DraggingItem;
         public static InterfaceCell StartCell;
         public static InterfaceCell EndCell;
+
+        public static Rectangle HintRectangle = new Rectangle(GameData.Window.Width - 310, 50, 300, 250);
     }
 
     public class InterfacePage
@@ -364,7 +548,7 @@ namespace EssenceOfMagic
         public InterfaceCell[] Cells { get; set; }
         public Rectangle Rect { get; set; }
         public Bitmap Back { get; set; }
-        public string Name { get; set; }
+        public string ID { get; set; }
         public Action Action { get; set; }
         public InterfaceCaption[] Captions { get; set; }
         public void Click(Point e)
@@ -409,6 +593,52 @@ namespace EssenceOfMagic
                         }
                     }
                 }
+            }
+        }
+        public void MouseMove(Point e)
+        {
+            if (e.X >= 0 && e.X < Rect.Width &&
+                e.Y >= 0 && e.Y < Rect.Height)
+            {
+                if (Captions != null)
+                {
+                    for (int c = 0; c < Captions.Length; c++)
+                    {
+                        if (e.X > Captions[c].Rect.Left &&
+                            e.X < Captions[c].Rect.Right &&
+                            e.Y > Captions[c].Rect.Top &&
+                            e.Y < Captions[c].Rect.Bottom)
+                        {
+                            Captions[c].Hovered = true;
+                        }
+                        else
+                        {
+                            Captions[c].Hovered = false;
+                        }
+                    }
+                }
+                if (Cells != null)
+                {
+                    for (int c = 0; c < Cells.Length; c++)
+                    {
+                        if (e.X > Cells[c].Rect.Left &&
+                            e.X < Cells[c].Rect.Right &&
+                            e.Y > Cells[c].Rect.Top &&
+                            e.Y < Cells[c].Rect.Bottom)
+                        {
+                            Cells[c].Hovered = true;
+                        }
+                        else
+                        {
+                            Cells[c].Hovered = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Captions != null) for (int c = 0; c < Captions.Length; c++) Captions[c].Hovered = false; 
+                if (Cells != null) for (int c = 0; c < Cells.Length; c++) Cells[c].Hovered = false; 
             }
         }
         public void Dispose()
