@@ -8,6 +8,7 @@ namespace EssenceOfMagic
     {
         public static void Start()
         {
+            if (Ticker != null) Ticker.Dispose();
             Ticker = Task.Run(() =>
             {
                 int delaysum = 0;
@@ -17,12 +18,12 @@ namespace EssenceOfMagic
                     Thread.Sleep(TimeDelay);
                     delaysum += TimeDelay;
                     Tick++;
-                    try { OnTick(); } catch { }
+                    OnTick?.Invoke();
                     if (delaysum >= 1000)
                     {
                         delaysum = 0;
                         Second++;
-                        try { OnSecond(); } catch { }
+                        OnSecond?.Invoke();
                     }
                 }
             });
@@ -30,7 +31,7 @@ namespace EssenceOfMagic
         public static void Freeze(int ticks)
         {
             isFreezed = true;
-            Task.Run(() => { 
+            _ = Task.Run(() => { 
                 Thread.Sleep(ticks * TimeDelay); 
                 isFreezed = false; 
             });

@@ -1,0 +1,44 @@
+[
+  {
+    "ID": "flask",
+	"Name": "Фляга с водой",
+	"Description": "ПКМ - использовать",
+	"Stackable": false,
+	"Count": 1,
+	"Cost": 10,
+	"Durability": 3,
+	"DurabilityMax": 3,
+	"isUsable": true,
+	"DurabilitySpending": 1,
+	"ItemType": 0,
+	"isDraggable": true
+  },
+  {
+    "ID": "bread",
+	"Name": "Хлеб",
+	"Description": "ПКМ - использовать",
+	"Stackable": false,
+	"Count": 1,
+	"Cost": 15,
+	"Durability": 1,
+	"DurabilityMax": 1,
+	"isUsable": true,
+	"DurabilitySpending": 1,
+	"ItemType": 0,
+	"isDraggable": true
+  },
+  {
+    "ID": "soup",
+	"Name": "Суп",
+	"Description": "ПКМ - использовать",
+	"Stackable": false,
+	"Count": 1,
+	"Cost": 20,
+	"Durability": 1,
+	"DurabilityMax": 1,
+	"isUsable": true,
+	"DurabilitySpending": 1,
+	"ItemType": 0,
+	"isDraggable": true
+  }
+]

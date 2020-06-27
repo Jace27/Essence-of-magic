@@ -49,7 +49,14 @@ namespace EssenceOfMagic
                 {
                     Array.Resize<GLMultiImage>(ref _sprites, _sprites.Length + 1);
                     _sprites[_sprites.Length - 1] = new GLMultiImage();
-                    try { _sprites[_sprites.Length - 1].FromBitmap((Bitmap)frame); } catch { }
+                    try 
+                    { 
+                        _sprites[_sprites.Length - 1].FromBitmap((Bitmap)frame); 
+                    } 
+                    catch (Exception ex)
+                    {
+                        GameData.InvokeException(ex);
+                    }
                 }
                 FrameCount = _sprites.Length;
                 Sprite = _sprites[0];
@@ -137,6 +144,7 @@ namespace EssenceOfMagic
                     GameTime.WaitForTick();
                     DateTime first = DateTime.Now;
                     CurrentFrame++;
+                    Sprite = Sprites[CurrentFrame];
                     while ((DateTime.Now - first).TotalMilliseconds < (delay * (CurrentFrame + 1))) Thread.Sleep(20);
                     if (isRepeat && CurrentFrame == FrameCount) CurrentFrame = 0;
                 }

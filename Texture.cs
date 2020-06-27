@@ -27,24 +27,20 @@ namespace EssenceOfMagic
         /// </summary>
         public Size Size { get; set; }
         /// <summary>
-        /// Положение центра текстуры
-        /// </summary>
-        public Point Center { get; set; }
-        /// <summary>
         /// Идентификатор текстуры
         /// </summary>
         public string ID { get; set; }
 
-        private GLMultiImage _sprite;
+        private GLMultiImage _img;
         [JsonIgnore]
-        public GLMultiImage Sprite
+        public GLMultiImage IMG
         {
             get
             {
                 if (!isInitialized) Init();
-                return _sprite;
+                return _img;
             }
-            set { _sprite = value; }
+            set { _img = value; }
         }
 
         private Animation _animation;
@@ -61,7 +57,7 @@ namespace EssenceOfMagic
             set 
             { 
                 _isanimated = value;
-                if (value) Sprite = null;
+                if (value) IMG = null;
                 else Animation = null;
             }
         }
@@ -71,7 +67,7 @@ namespace EssenceOfMagic
             if (Animation != null)
                 return Animation.Sprites[Animation.CurrentFrame];
             else
-                return Sprite;
+                return IMG;
         }
 
         private Bitmap _bmp;
@@ -100,8 +96,8 @@ namespace EssenceOfMagic
                     temp.Dispose();
                 }
                 img.Dispose();
-                _sprite = new GLMultiImage();
-                try { _sprite.FromBitmap(_bmp); } catch { }
+                _img = new GLMultiImage();
+                try { _img.FromBitmap(_bmp); } catch { }
             }
             else if (new FileInfo(GameData.AnimationFolder + "\\" + File).Exists)
             {
@@ -114,8 +110,8 @@ namespace EssenceOfMagic
             else
             {
                 _bmp = new Bitmap(Size.Width, Size.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                _sprite = new GLMultiImage();
-                _sprite.FromBitmap(_bmp);
+                _img = new GLMultiImage();
+                _img.FromBitmap(_bmp);
             }
             isInitialized = true;
         }
@@ -130,7 +126,6 @@ namespace EssenceOfMagic
             Texture temp = (Texture)this.MemberwiseClone();
             if (BMP != null)
                 temp.BMP = (Bitmap)BMP.Clone();
-            temp.Center = new Point(Center.X, Center.Y);
             temp.Size = new Size(Size.Width, Size.Height);
             temp.srcRect = new Rectangle(srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height);
             if (isInitialized) temp.Init();

@@ -21,7 +21,20 @@ namespace EssenceOfMagic
 
             GameData.CheckFileStruct();
 
+            GameData.Game = this;
+            GameData.isInGame = true;
+
             graphicSurface1.OnLoad += GraphicSurface1_OnLoad;
+        }
+
+        private void Game_MouseDown(object sender, MouseEventArgs e)
+        {
+            Interface.Game_MouseDown(e);
+        }
+
+        private void Game_MouseUp(object sender, MouseEventArgs e)
+        {
+            Interface.Game_MouseUp(e);
         }
 
         private void GraphicSurface1_OnLoad()
@@ -31,13 +44,19 @@ namespace EssenceOfMagic
             GameObjects.Init();
             Creatures.Init();
             Players.Init();
+            Items.Init();
+
+            if (!GameData.isLoadingGame)
+                using (StreamReader sr = new StreamReader(GameData.WorldFolder + "\\world.json"))
+                    GameData.World = JsonSerializer.Deserialize<World>(sr.ReadToEnd());
+            GameData.RegenGID();
+            Player = GameData.World.Objects.players[0];
             Interface.Owner = this;
+            Interface.InventoryCellsCount = Player.Inventory.CountBackpack;
+            Interface.ShopCellsCount = Creatures.Get("shop").Inventory.CountBackpack;
             Interface.Init();
 
-            using (StreamReader sr = new StreamReader(GameData.WorldFolder + "\\world.json"))
-                GameData.World = JsonSerializer.Deserialize<World>(sr.ReadToEnd());
 
-            Player = GameData.World.Players[0];
             Player.Animations = new Animations();
             Animation calm = new Animation();
             calm.SpriteFile = "player.calm.gif";
@@ -45,25 +64,27 @@ namespace EssenceOfMagic
             calm.Init();
             Player.Animations.Add("player.calm", calm);
             Player.BeginAnim("player.calm", true);
-            Player.OnMove += Player_OnMove;
-            Camera = new Camera() { Location = new Location(Player.Location.X + GameData.BlockSize.Width / 2, Player.Location.Y + GameData.BlockSize.Height / 2, 0) };
+
+            if (!GameData.isLoadingGame) Camera = new Camera();
+            Camera.Link(Player);
 
             GameTime.Start();
+
+            _ = Task.Run(() =>
+            {
+                GLGraphics g = new GLGraphics();
+                while (true) graphicSurface1.Invoke(new GraphicSurface.ThreadTransit(graphicSurface1.Draw), g);
+            });
+
+            graphicSurface1.MouseDown += Game_MouseDown;
+            graphicSurface1.MouseUp += Game_MouseUp;
+
+            GameData.TitleScreen.Hide();
 
             isInitialized = true;
         }
 
         bool isInitialized = false;
-
-        private void Player_OnMove(Vector Vector)
-        {
-            Camera.Move(Vector);
-            if (Camera.Location.X != Player.Location.X + GameData.BlockSize.Width / 2 ||
-                Camera.Location.Y != Player.Location.Y + GameData.BlockSize.Height / 2)
-            {
-                Camera.Location = new Location(Player.Location.X + GameData.BlockSize.Width / 2, Player.Location.Y + GameData.BlockSize.Height / 2, Player.Location.Z);
-            }
-        }
 
         public struct UsingTexture
         {
@@ -181,32 +202,18 @@ namespace EssenceOfMagic
             #endregion
 
             #region Объекты
-            GameObject[] OCP = new GameObject[GameData.World.Objects.Length + GameData.World.Creatures.Length + GameData.World.Players.Length];
-            int ind = 0;
-            for (int i = 0; i < GameData.World.Objects.Length; i++)
+            int t = 0;
+            Rectangle[] Hitboxes = new Rectangle[GameData.World.Objects.CountAll];
+            for (int i = 0; i < GameData.World.Objects.CountAll; i++)
             {
-                OCP[ind] = GameData.World.Objects[i];
-                ind++;
-            }
-            for (int i = 0; i < GameData.World.Creatures.Length; i++)
-            {
-                OCP[ind] = GameData.World.Creatures[i];
-                ind++;
-            }
-            for (int i = 0; i < GameData.World.Players.Length; i++)
-            {
-                OCP[ind] = GameData.World.Players[i];
-                ind++;
-            }
+                GameObject temp = GameData.World.Objects.Get(i);
 
-            for (int c = 0; c < OCP.Length; c++)
-            {
                 Point ol = new Point(
                     Convert.ToInt32(
-                        WorldToWindow.X + OCP[c].Location.X
+                        WorldToWindow.X + temp.Location.X
                     ),
                     Convert.ToInt32(
-                        WorldToWindow.Y + OCP[c].Location.Y - OCP[c].Location.Z
+                        WorldToWindow.Y + temp.Location.Y - temp.Location.Z
                     )
                 );
 
@@ -214,13 +221,24 @@ namespace EssenceOfMagic
 
                 Array.Resize<UsingTexture>(ref UT, UT.Length + 1);
 
-                UT[cl].tID = OCP[c].ID;
+                UT[cl].tID = temp.ID;
                 UT[cl].Rect = new List<RectangleF>();
-                UT[cl].Rect.Add(new RectangleF(ol.X, ol.Y, OCP[c].Size.Width, OCP[c].Size.Height));
-                if (OCP[c].CurrentAnim != null)
-                    UT[cl].IMG = OCP[c].CurrentAnim.Sprites[OCP[c].CurrentAnim.CurrentFrame];
+                UT[cl].Rect.Add(new RectangleF(ol.X, ol.Y, temp.Size.Width, temp.Size.Height));
+                if (temp.CurrentAnim != null)
+                    UT[cl].IMG = temp.CurrentAnim.Sprites[temp.CurrentAnim.CurrentFrame];
                 else
-                    UT[cl].IMG = OCP[c].Sprite.GetIMG();
+                    UT[cl].IMG = temp.Sprite.GetIMG();
+
+                Bitmap texture;
+                if (temp.CurrentAnim != null)
+                    texture = temp.CurrentAnim.Sprite.bitmap;
+                else if (temp.Sprite != null)
+                    texture = temp.Sprite.IMG.bitmap;
+                else
+                    texture = new Bitmap(Size.Width, Size.Height);
+                if (temp.Hitbox != null)
+                    Hitboxes[t] = GameData.HitboxConvert(temp.Location, temp.Size, texture.Size, temp.Hitbox);
+                t++;
             }
             #endregion
 
@@ -231,26 +249,42 @@ namespace EssenceOfMagic
                     UT[i].IMG.SetImageTiles(UT[i].Rect); 
                     e.DrawMultiImage(UT[i].IMG);
                 }
-                catch { 
-                    Invalidate(); 
+                catch (Exception ex)
+                { 
+                    MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                    graphicSurface1.Invalidate();
                 }
             }
 
-            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 45, 30));
-            e.DrawString(graphicSurface1.FPS.ToString(), new Font("Arial", 12f), Color.White, 5, 5);
-            e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 30, 90, 73));
-            AddedInfo = Interface.FPS.ToString() + "\n" + (GC.GetTotalMemory(false) / 1024 / 1024) + " МБ";
-            if (GameTime.isFreezed)
-                AddedInfo += "\nfreezed";
-            e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
+            if (Settings.ShowHitboxes)
+                for (int i = 0; i < Hitboxes.Length; i++)
+                    if (Hitboxes[i] != null)
+                        e.DrawRectangle(Color.FromArgb(92, 255, 255, 0), 
+                            new Rectangle(
+                                Hitboxes[i].X - WindowToWorld.X,
+                                Hitboxes[i].Y - WindowToWorld.Y,
+                                Hitboxes[i].Width,
+                                Hitboxes[i].Height
+                            )
+                        );
 
-            e.DrawMultiImage(Interface.IMG);
+            if (Settings.ShowDebugInformation)
+            {
+                e.FillRectangle(Color.FromArgb(191, 63, 63, 63), new Rectangle(0, 0, 135, 90));
+                e.DrawString(graphicSurface1.FPS.ToString() + " FPS OpenGL", new Font("Arial", 12f), Color.White, 5, 5);
+                AddedInfo = Interface.FPS.ToString() + " FPS GDI\n" + (GC.GetTotalMemory(false) / 1024 / 1024) + " МБ GC";
+                if (GameTime.isFreezed)
+                    AddedInfo += "\n Game freezed";
+                e.DrawString(AddedInfo, new Font("Arial", 12f), Color.White, 5, 35);
+            }
+
+            if (Settings.ShowInterface) e.DrawMultiImage(Interface.IMG);
         }
 
-        bool A = false;
-        bool S = false;
-        bool D = false;
-        bool W = false;
+        public static bool A = false;
+        public static bool S = false;
+        public static bool D = false;
+        public static bool W = false;
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
             AddedInfo = e.KeyCode.ToString();
@@ -283,13 +317,17 @@ namespace EssenceOfMagic
                         direction = Direction.Ceiling;
                     else
                         direction = Direction.Null;
-                         if (W && A) direction = Direction.UpLeft;
+                    if (W && A) direction = Direction.UpLeft;
                     else if (W && D) direction = Direction.UpRight;
                     else if (S && A) direction = Direction.DownLeft;
                     else if (S && D) direction = Direction.DownRight;
-                    
-                    Task.Run(() => { Player.Move(direction); });
+
+                    _ = Task.Run(() =>
+                    {
+                        Player.Move(direction);
+                    });
                 }
+
             }
         }
 
@@ -317,17 +355,37 @@ namespace EssenceOfMagic
                 Interface.Page = InterfacePages.Menu;
                 GameTime.isFreezed = true;
             }
+            else
+            if (e.KeyCode == Keys.E)
+            {
+                if (Interface.Page == InterfacePages.Game)
+                {
+                    Interface.Page = InterfacePages.Inventory;
+                    GameTime.isFreezed = true;
+                }
+                else if (Interface.Page == InterfacePages.Inventory)
+                {
+                    Interface.Page = InterfacePages.Game;
+                    GameTime.isFreezed = false;
+                }
+            }
         }
 
         private void Game_MouseMove(object sender, MouseEventArgs e)
         {
             GameData.Cursor = e.Location;
             Interface.MouseMove(e.Location);
+            GameData.World.MouseMove(new Point(e.X + WindowToWorld.X, e.Y + WindowToWorld.Y));
         }
 
         private void GraphicSurface1_MouseClick(object sender, MouseEventArgs e)
         {
-            Interface.Click(e.Location);
+            Interface.Click(e.Location, e.Button);
+            GameData.World.Click(new Point(e.X + WindowToWorld.X, e.Y + WindowToWorld.Y), e.Button);
+        }
+
+        private void Game_FormClosing(object sender, FormClosingEventArgs e)
+        {
         }
     }
 }

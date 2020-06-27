@@ -40,10 +40,10 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(235)))), ((int)(((byte)(215)))));
-            this.label1.Font = new System.Drawing.Font("Segoe Script", 20F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(731, 89);
+            this.label1.Font = new System.Drawing.Font("Segoe Script", 18F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(530, 75);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(257, 88);
+            this.label1.Size = new System.Drawing.Size(231, 88);
             this.label1.TabIndex = 0;
             this.label1.Text = "Ролевая игра\r\nEssence of Magic";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -52,7 +52,7 @@
             // 
             this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(235)))), ((int)(((byte)(215)))));
             this.label2.Font = new System.Drawing.Font("Segoe Script", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(281, 442);
+            this.label2.Location = new System.Drawing.Point(202, 375);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(257, 88);
             this.label2.TabIndex = 1;
@@ -63,7 +63,7 @@
             // NewGameBtn
             // 
             this.NewGameBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(235)))), ((int)(((byte)(215)))));
-            this.NewGameBtn.Location = new System.Drawing.Point(772, 220);
+            this.NewGameBtn.Location = new System.Drawing.Point(558, 213);
             this.NewGameBtn.Name = "NewGameBtn";
             this.NewGameBtn.Size = new System.Drawing.Size(177, 39);
             this.NewGameBtn.TabIndex = 2;
@@ -77,12 +77,13 @@
             // LoadGameBtn
             // 
             this.LoadGameBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(235)))), ((int)(((byte)(215)))));
-            this.LoadGameBtn.Location = new System.Drawing.Point(772, 265);
+            this.LoadGameBtn.Location = new System.Drawing.Point(558, 258);
             this.LoadGameBtn.Name = "LoadGameBtn";
             this.LoadGameBtn.Size = new System.Drawing.Size(177, 39);
             this.LoadGameBtn.TabIndex = 3;
             this.LoadGameBtn.Text = "Загрузить игру";
             this.LoadGameBtn.UseVisualStyleBackColor = false;
+            this.LoadGameBtn.Click += new System.EventHandler(this.LoadGameBtn_Click);
             this.LoadGameBtn.Paint += new System.Windows.Forms.PaintEventHandler(this.Btns_Paint);
             this.LoadGameBtn.MouseEnter += new System.EventHandler(this.Btns_MouseEnter);
             this.LoadGameBtn.MouseLeave += new System.EventHandler(this.Btns_MouseLeave);
@@ -90,12 +91,13 @@
             // SettingsBtn
             // 
             this.SettingsBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(235)))), ((int)(((byte)(215)))));
-            this.SettingsBtn.Location = new System.Drawing.Point(772, 310);
+            this.SettingsBtn.Location = new System.Drawing.Point(558, 303);
             this.SettingsBtn.Name = "SettingsBtn";
             this.SettingsBtn.Size = new System.Drawing.Size(177, 39);
             this.SettingsBtn.TabIndex = 4;
             this.SettingsBtn.Text = "Настройки";
             this.SettingsBtn.UseVisualStyleBackColor = false;
+            this.SettingsBtn.Click += new System.EventHandler(this.SettingsBtn_Click);
             this.SettingsBtn.Paint += new System.Windows.Forms.PaintEventHandler(this.Btns_Paint);
             this.SettingsBtn.MouseEnter += new System.EventHandler(this.Btns_MouseEnter);
             this.SettingsBtn.MouseLeave += new System.EventHandler(this.Btns_MouseLeave);
@@ -103,7 +105,7 @@
             // ExitBtn
             // 
             this.ExitBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(235)))), ((int)(((byte)(215)))));
-            this.ExitBtn.Location = new System.Drawing.Point(772, 355);
+            this.ExitBtn.Location = new System.Drawing.Point(558, 348);
             this.ExitBtn.Name = "ExitBtn";
             this.ExitBtn.Size = new System.Drawing.Size(177, 39);
             this.ExitBtn.TabIndex = 5;
@@ -118,8 +120,8 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(960, 640);
             this.Controls.Add(this.ExitBtn);
             this.Controls.Add(this.SettingsBtn);
             this.Controls.Add(this.LoadGameBtn);

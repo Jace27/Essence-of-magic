@@ -8,7 +8,7 @@ namespace EssenceOfMagic
 {
     public partial class Game
     {
-        GameObject Player;
-        Camera Camera;
+        public Player Player;
+        public Camera Camera;
     }
 }

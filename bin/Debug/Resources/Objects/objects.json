@@ -1,0 +1,90 @@
+[
+  {
+    "Animations": null,
+    "ID": "invisible wall",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "dark_tree1",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "tree1",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "house1",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "house2",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "house3",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "house4",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  },
+  {
+    "Animations": null,
+    "ID": "house5",
+    "Name": null,
+    "Size": {
+      "IsEmpty": false,
+      "Width": 192,
+      "Height": 192
+    },
+    "MoveSpeed": 0
+  }
+]

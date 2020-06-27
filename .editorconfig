@@ -14,3 +14,6 @@ csharp_style_unused_value_assignment_preference = discard_variable:none
 
 # IDE0044: Добавить модификатор только для чтения
 dotnet_style_readonly_field = true:none
+
+# IDE0028: Упростите инициализацию коллекции
+dotnet_style_collection_initializer = true:none

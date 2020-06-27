@@ -15,17 +15,29 @@ namespace EssenceOfMagic
             isDead = false;
             Vulnarable = true;
 
-            _hpRegen();
-            _needs();
-            //_mpRegen();
+            _ = Task.Run(() =>
+            {
+                Creature creature = this;
+                while (true)
+                {
+                    bool isDies = Vulnarable && (_satiety == 0 || _water == 0 ||
+                        (GameTime.Second - LastSleep) > (GameData.DayLength.TotalSeconds * 2));
 
-            GameTime.OnSecond += GameTime_OnSecond;
-        }
+                    GameTime.WaitForSecond();
+                    if (HPRegen && !isDead && !isDies && !GameTime.isFreezed) HP += HPRegenSpeed;
+                    GameTime.WaitForSecond();
+                    GameTime.WaitForSecond();
+                    GameTime.WaitForSecond();
+                    GameTime.WaitForSecond();
+                    if (Vulnarable && !GameTime.isFreezed)
+                    {
+                        Water--;
+                        Satiety--;
+                    }
 
-        private void GameTime_OnSecond()
-        {
-            if ((DateTime.Now - LastSleep).TotalMilliseconds > GameData.DayLength.TotalMilliseconds * 2)
-                SlowDeath();
+                    if (isDies) HP -= 2;
+                }
+            });
         }
 
         new public Creature Clone()
@@ -61,7 +73,7 @@ namespace EssenceOfMagic
         }
 
         #region Life (HP, dead, vulnerable)
-        private double _hp;
+        private double _hp = -1;
         public double HP
         {
             get { return _hp; }
@@ -74,17 +86,19 @@ namespace EssenceOfMagic
                     isDead = false;
                     return; 
                 }
-                if (value < 0)
+                if (_hpmax == -1000000)
+                    _hp = value;
+                else if (value < 0)
                     _hp = 0;
                 else if (value > _hpmax)
                     _hp = _hpmax;
                 else
                     _hp = value;
-                if (_hp <= 0 && Vulnarable)
+                if (_hp <= 0 && Vulnarable && _hpmax != -1000000)
                     isDead = true;
             }
         }
-        private double _hpmax;
+        private double _hpmax = -1000000;
         public double HPMax
         {
             get { return _hpmax; }
@@ -98,7 +112,7 @@ namespace EssenceOfMagic
                 if (_hp > _hpmax) _hp = _hpmax;
             }
         }
-        private bool _hpregen;
+        private bool _hpregen = true;
         public bool HPRegen
         {
             get { return _hpregen; }
@@ -110,27 +124,8 @@ namespace EssenceOfMagic
             get { return _hpregenspeed; }
             set { _hpregenspeed = value; }
         }
-        private void _hpRegen()
-        {
-            Task.Run(() =>
-            {
-                if (_hpmax > 0 && !_hpregen)
-                {
-                    _hpregen = true;
-                    while (isAlive && _hpregen)
-                    {
-                        if (!GameTime.isFreezed)
-                        {
-                            DateTime Old = DateTime.Now;
-                            if (HPRegen) HP += (DateTime.Now - Old).TotalSeconds * HPRegenSpeed;
-                        }
-                        Thread.Sleep(1000);
-                    }
-                    _hpregen = false;
-                }
-            });
-        }
-        private bool _isdead;
+        private bool isHPRegen = false;
+        private bool _isdead = false;
         public bool isDead
         {
             get { return _isdead; }
@@ -141,11 +136,24 @@ namespace EssenceOfMagic
                 if (_isdead)
                 {
                     _hp = 0;
-                    try { Animations["Death"].Start(false); } catch { }
+                    if (Animations != null) Animations["Death"]?.Start(false);
+                    Interface.ShowScreen(
+                        "Игра окончена",
+                        "Вы погибли. ЛКМ для выхода в главное меню.",
+                        Color.Red,
+                        Color.DarkGray,
+                        Color.White,
+                        () =>
+                        {
+                            GameData.Game.Close();
+                            GameData.TitleScreen.Show();
+                            Interface.Screen = null;
+                        }
+                    );
                 }
             }
         }
-        private bool _isalive;
+        private bool _isalive = true;
         public bool isAlive
         {
             get { return _isalive; }
@@ -157,9 +165,6 @@ namespace EssenceOfMagic
                 {
                     if (_hpmax < 1) _hpmax = 1;
                     if (_hp < 1) _hp = 1;
-                    _hpRegen();
-                    _needs();
-                    //_mpRegen();
                 }
             }
         }
@@ -170,35 +175,7 @@ namespace EssenceOfMagic
             set
             {
                 _vulnarable = value;
-                if (value)
-                {
-                    _hpRegen();
-                    _needs();
-                }
             }
-        }
-        public void SlowDeath()
-        {
-            if (Vulnarable)
-            {
-                _ = Task.Run(() =>
-                {
-                    _hpregen = false;
-                    while (Vulnarable && 
-                           (_satiety == 0 || 
-                           _water == 0 || 
-                           (DateTime.Now - LastSleep).TotalMilliseconds > (GameData.DayLength.TotalMilliseconds * 2)))
-                    {
-                        if (!GameTime.isFreezed) HP -= 2;
-                        Thread.Sleep(1000);
-                    }
-                });
-            }
-        }
-        public void Death()
-        {
-            Vulnarable = true;
-            isDead = true;
         }
         #endregion
 
@@ -229,7 +206,7 @@ namespace EssenceOfMagic
             set 
             { 
                 if (value >= 0 && value < _satietymax) _satiety = value;
-                if (value == 0) SlowDeath();
+                if (value > _satietymax) _satiety = _satietymax;
             }
         }
 
@@ -246,8 +223,8 @@ namespace EssenceOfMagic
             get { return _water; }
             set
             {
-                if (value >= 0 && value < _water) _water = value;
-                if (value == 0) SlowDeath();
+                if (value >= 0 && value <= _watermax) _water = value;
+                if (value > _watermax) _water = _watermax;
             }
         }
 
@@ -258,34 +235,10 @@ namespace EssenceOfMagic
             set { if (value > 0) _watermax = value; }
         }
 
-        public DateTime LastSleep { get; set; } = DateTime.Now;
-
-        private bool isNeedsCounting = false;
-        private void _needs()
-        {
-            if (!isNeedsCounting)
-            {
-                if (Vulnarable)
-                {
-                    _ = Task.Run(() =>
-                    {
-                        isNeedsCounting = true;
-                        while (Vulnarable)
-                        {
-                            Thread.Sleep(500);
-                            if (!GameTime.isFreezed)
-                            {
-                                Water--;
-                                Satiety--;
-                            }
-                        }
-                        isNeedsCounting = false;
-                    });
-                }
-                else isNeedsCounting = false;
-            }
-        }
+        public int LastSleep { get; set; } = 0;
         #endregion
+
+        public Inventory Inventory { get; set; } = new Inventory();
 
         #region deleted
         /*

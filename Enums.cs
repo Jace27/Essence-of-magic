@@ -26,4 +26,8 @@ namespace EssenceOfMagic
         UpLeft, UpRight, DownLeft, DownRight,
         Null
     }
+    public enum ObjectType
+    {
+        Object, Creature, Player, Unknown
+    }
 }

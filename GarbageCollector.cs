@@ -18,10 +18,10 @@ namespace EssenceOfMagic
                         LastGC = DateTime.Now;
                         GC.Collect();
                     }
-                    Thread.Sleep(20);
+                    Thread.Sleep(200);
                 }
             });
         }
-        public static int CollectorDelay = 1000;
+        public static int CollectorDelay = 10000;
     }
 }

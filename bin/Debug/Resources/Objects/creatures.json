@@ -1,0 +1,97 @@
+[ 
+  {
+    "HP": 1000,
+    "HPMax": 1000,
+    "HPRegen": false,
+    "HPRegenSpeed": 1000,
+    "isDead": false,
+    "isAlive": true,
+    "Vulnarable": true,
+    "Level": 1,
+    "Exp": 0,
+    "Satiety": 100,
+    "SatietyMax": 100,
+    "Water": 100,
+    "WaterMax": 100,
+    "LastSleep": 0,
+    "Inventory": {
+      "Backpack": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "Hotbar": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "Equipment": [
+        null
+      ],
+      "CountAll": 30,
+      "CountBackpack": 24,
+      "CountHotbar": 5,
+      "CountEquipment": 1,
+      "Money": 0
+    },
+    "CurrentAnim": null,
+    "Animations": null,
+    "ID": "shop",
+    "Name": "\u0410\u043D\u043D\u0430 - \u0442\u043E\u0440\u0433\u043E\u0432\u0435\u0446",
+    "Location": {
+      "X": 1653,
+      "Y": 682,
+      "Z": 0
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 48,
+      "Height": 72
+    },
+    "Hitbox": {
+      "Location": {
+        "IsEmpty": true,
+        "X": 0,
+        "Y": 0
+      },
+      "Size": {
+        "IsEmpty": false,
+        "Width": 64,
+        "Height": 64
+      },
+      "X": 0,
+      "Y": 0,
+      "Width": 64,
+      "Height": 64,
+      "Left": 0,
+      "Top": 0,
+      "Right": 64,
+      "Bottom": 64,
+      "IsEmpty": false
+    },
+    "MoveSpeed": 0
+  }
+]

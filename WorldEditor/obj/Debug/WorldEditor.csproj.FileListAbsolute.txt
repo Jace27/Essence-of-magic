@@ -528,3 +528,4 @@ A:\EssenceOfMagic\essence-of-magic\WorldEditor\obj\Debug\WorldEditor.csproj.Gene
 A:\EssenceOfMagic\essence-of-magic\WorldEditor\obj\Debug\WorldEditor.csproj.CopyComplete
 A:\EssenceOfMagic\essence-of-magic\WorldEditor\obj\Debug\WorldEditor.exe
 A:\EssenceOfMagic\essence-of-magic\WorldEditor\obj\Debug\WorldEditor.pdb
+A:\EssenceOfMagic\essence-of-magic\WorldEditor\obj\Debug\WorldEditor.csproj.CoreCompileInputs.cache

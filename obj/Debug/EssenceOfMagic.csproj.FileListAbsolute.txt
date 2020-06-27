@@ -644,4 +644,8 @@ H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.csproj.GenerateResource.cach
 H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.csproj.CopyComplete
 H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.exe
 H:\Essence-of-magic-master\obj\Debug\EssenceOfMagic.pdb
+A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.Settings.resources
+A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.csproj.CoreCompileInputs.cache
 A:\EssenceOfMagic\essence-of-magic\obj\Debug\EssenceOfMagic.csprojAssemblyReference.cache
+A:\EssenceOfMagic\essence-of-magic\bin\Debug\NAudio.dll
+A:\EssenceOfMagic\essence-of-magic\bin\Debug\NAudio.xml

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using EssenceOfMagic;
 using System.Collections.Generic;
-using GLGDIPlus;
+//using GLGDIPlus;
 
 namespace WorldEditor
 {
@@ -19,13 +19,14 @@ namespace WorldEditor
 
             GameData.AnimationFolder = DataPath + "\\Textures\\Animations";
             GameData.ArmorFolder = DataPath + "\\Armor";
-            GameData.ObjectsFolder = DataPath + "\\Creatures";
+            GameData.ObjectsFolder = DataPath + "\\Objects";
             GameData.TextureFolder = DataPath + "\\Textures";
             GameData.TriggersFolder = DataPath + "\\Triggers";
             GameData.WeaponFolder = DataPath + "\\Weapon";
             GameData.WorldFolder = DataPath + "\\Map";
 
             Textures.Init();
+            Animations.Init();
             GameObjects.Init();
             Creatures.Init();
             Players.Init();
@@ -45,12 +46,15 @@ namespace WorldEditor
             DirectoryInfo di = new DirectoryInfo(DataPath);
             using (StreamReader sr = new StreamReader(di.FullName + "\\Map\\world.json"))
                 World = JsonSerializer.Deserialize<World>(sr.ReadToEnd());
+            GameData.World = World;
+
             WorldRect = new Rectangle(0, 0, World.Ground.Length * BlockSize.Width, World.Ground[0].Length * BlockSize.Height);
             WorldSettings.WorldSize = new Size(World.Ground.Length, World.Ground[0].Length);
 
-            if (World.Objects == null) World.Objects = new GameObject[0];
-            if (World.Creatures == null) World.Creatures = new Creature[0];
-            if (World.Players == null) World.Players = new Player[0];
+            for (int c = 0; c < GameData.World.Objects.creatures.Length; c++)
+                GameData.World.Objects.creatures[c].Vulnarable = false;
+            for (int p = 0; p < GameData.World.Objects.players.Length; p++)
+                GameData.World.Objects.players[p].Vulnarable = false;
 
             Collisions = new bool[World.Ground.Length, World.Ground[0].Length];
             for (int x = 0; x < World.Ground.Length; x++)
@@ -58,7 +62,9 @@ namespace WorldEditor
                     if (World.Ground[x][y].Layers.Length > 1)
                         Collisions[x, y] = true;
 
-            label4.Text = String.Format("Всего: {0}", World.Objects.Length + World.Creatures.Length + World.Players.Length);
+            GameData.RegenGID();
+
+            label4.Text = String.Format("Всего: {0}", World.Objects.CountAll);
         }
 
         private static World World;
@@ -107,28 +113,13 @@ namespace WorldEditor
                     }
                 }
             }
-            for (int i = 0; i < World.Objects.Length; i++)
+            for (int i = 0; i < World.Objects.CountAll; i++)
             {
-                World.Objects[i].Location = new Location(
-                    World.Objects[i].Location.X + dx * BlockSize.Width,
-                    World.Objects[i].Location.Y + dy * BlockSize.Height,
-                    World.Objects[i].Location.Z
-                );
-            }
-            for (int i = 0; i < World.Creatures.Length; i++)
-            {
-                World.Creatures[i].Location = new Location(
-                    World.Creatures[i].Location.X + dx * BlockSize.Width,
-                    World.Creatures[i].Location.Y + dy * BlockSize.Height,
-                    World.Creatures[i].Location.Z
-                );
-            }
-            for (int i = 0; i < World.Players.Length; i++)
-            {
-                World.Players[i].Location = new Location(
-                    World.Players[i].Location.X + dx * BlockSize.Width,
-                    World.Players[i].Location.Y + dy * BlockSize.Height,
-                    World.Players[i].Location.Z
+                GameObject go = World.Objects.Get(i);
+                go.Location = new Location(
+                    go.Location.X + dx * BlockSize.Width,
+                    go.Location.Y + dy * BlockSize.Height,
+                    go.Location.Z
                 );
             }
 
@@ -146,150 +137,148 @@ namespace WorldEditor
 
         public void Draw(Graphics graphics)
         {
-            Bitmap buffer1 = new Bitmap(DrawingRect.Width, DrawingRect.Height);
-            buffer1.SetResolution(192f, 192f);
-            using (Graphics gr1 = Graphics.FromImage(buffer1))
+            int i1 = WorldRect.X * -1 / BlockSize.Width;
+            int i2 = i1 + DrawingRect.Width / BlockSize.Width + 1;
+            int l1 = WorldRect.Y * -1 / BlockSize.Height;
+            int l2 = l1 + DrawingRect.Height / BlockSize.Height + 1;
+            Bitmap output = new Bitmap((i2 - i1 - 1) * BlockSize.Width, (l2 - l1 - 1) * BlockSize.Height);
+            using (Graphics gr = Graphics.FromImage(output))
             {
-                gr1.FillRectangle(SystemBrushes.ActiveCaption, new Rectangle(0, 0, buffer1.Width, buffer1.Height));
-                Bitmap buffer2 = new Bitmap(WorldRect.Width + 2, WorldRect.Height + 2);
-                buffer2.SetResolution(192f, 192f);
-                using (Graphics gr2 = Graphics.FromImage(buffer2))
+                Bitmap buffer1 = new Bitmap(DrawingRect.Width, DrawingRect.Height);
+                buffer1.SetResolution(192f, 192f);
+                using (Graphics gr1 = Graphics.FromImage(buffer1))
                 {
-                    int lm = World.Ground[0][0].Layers.Length;
-                    for (int x = 0; x < World.Ground.Length; x++)
-                        for (int y = 0; y < World.Ground[0].Length; y++)
-                            if (lm < World.Ground[x][y].Layers.Length)
-                                lm = World.Ground[x][y].Layers.Length;
-
-                    #region Отрисовка слоев
-                    for (int l = 0; l < lm; l++) 
+                    gr1.FillRectangle(SystemBrushes.ActiveCaption, new Rectangle(0, 0, buffer1.Width, buffer1.Height));
+                    Bitmap buffer2 = new Bitmap(WorldRect.Width + 2, WorldRect.Height + 2);
+                    buffer2.SetResolution(192f, 192f);
+                    using (Graphics gr2 = Graphics.FromImage(buffer2))
                     {
-                        int i1 = WorldRect.X * -1 / BlockSize.Width;
-                        int i2 = i1 + DrawingRect.Width / BlockSize.Width + 1;
-                        for (int x = i1; x < i2; x++)
+                        int lm = World.Ground[0][0].Layers.Length;
+                        for (int x = 0; x < World.Ground.Length; x++)
+                            for (int y = 0; y < World.Ground[0].Length; y++)
+                                if (lm < World.Ground[x][y].Layers.Length)
+                                    lm = World.Ground[x][y].Layers.Length;
+
+                        #region Отрисовка слоев
+                        for (int l = 0; l < lm; l++)
                         {
-                            if (x >= 0 && x < World.Ground.Length) 
+                            for (int x = i1; x < i2; x++)
                             {
-                                int l1 = WorldRect.Y * -1 / BlockSize.Height;
-                                int l2 = l1 + DrawingRect.Height / BlockSize.Height + 1;
-                                for (int y = l1; y < l2; y++)
+                                if (x >= 0 && x < World.Ground.Length)
                                 {
-                                    if (y >= 0 && y < World.Ground[x].Length) 
+                                    for (int y = l1; y < l2; y++)
                                     {
-                                        Bitmap block = new Bitmap(BlockSize.Width, BlockSize.Height);
-                                        block.SetResolution(192f, 192f);
-                                        using (Graphics gr3 = Graphics.FromImage(block))
+                                        if (y >= 0 && y < World.Ground[x].Length)
                                         {
-                                            if (l < World.Ground[x][y].Layers.Length)
+                                            Bitmap block = new Bitmap(BlockSize.Width, BlockSize.Height);
+                                            block.SetResolution(192f, 192f);
+                                            using (Graphics gr3 = Graphics.FromImage(block))
                                             {
-                                                Texture Current = Textures.Get(World.Ground[x][y].Layers[l]);
-                                                if (Current != null)
+                                                if (l < World.Ground[x][y].Layers.Length)
                                                 {
-                                                    if (!Current.isInitialized) Current.Init();
-                                                    if (Current.GetIMG().bitmap != null)
-                                                        gr3.DrawImage(Current.GetIMG().bitmap, 0, 0, block.Width, block.Height);
+                                                    Texture Current = Textures.Get(World.Ground[x][y].Layers[l]);
+                                                    if (Current != null)
+                                                    {
+                                                        if (!Current.isInitialized) Current.Init();
+                                                        if (Current.GetIMG().bitmap != null)
+                                                            gr3.DrawImage(Current.GetIMG().bitmap, 0, 0, block.Width, block.Height);
+                                                    }
                                                 }
+
+                                                if (ShowCollisions)
+                                                    if (Collisions != null)
+                                                        if (Collisions[x, y])
+                                                            gr3.DrawRectangle(Pens.Red, 0, 0, block.Width - 1, block.Height - 1);
+
+                                                if (HoverBlock != null && HoverBlock.X >= 0 && HoverBlock.Y >= 0)
+                                                    if (x == HoverBlock.X && y == HoverBlock.Y)
+                                                        gr3.DrawRectangle(Pens.Silver, 0, 0, block.Width - 1, block.Height - 1);
+
+                                                if (Brush == EditorBrush.SelectBlock)
+                                                    if (SelectedBlock != null && SelectedBlock.X >= 0 && SelectedBlock.Y >= 0)
+                                                        if (x == SelectedBlock.X && y == SelectedBlock.Y)
+                                                            gr3.DrawRectangle(Pens.Blue, 0, 0, block.Width - 1, block.Height - 1);
                                             }
-
-                                            if (ShowCollisions)
-                                                if (Collisions != null)
-                                                    if (Collisions[x, y])
-                                                        gr3.DrawRectangle(Pens.Red, 0, 0, block.Width - 1, block.Height - 1);
-
-                                            if (HoverBlock != null && HoverBlock.X >= 0 && HoverBlock.Y >= 0)
-                                                if (x == HoverBlock.X && y == HoverBlock.Y)
-                                                    gr3.DrawRectangle(Pens.Silver, 0, 0, block.Width - 1, block.Height - 1);
-
-                                            if (Brush == EditorBrush.SelectBlock)
-                                                if (SelectedBlock != null && SelectedBlock.X >= 0 && SelectedBlock.Y >= 0)
-                                                    if (x == SelectedBlock.X && y == SelectedBlock.Y)
-                                                        gr3.DrawRectangle(Pens.Blue, 0, 0, block.Width - 1, block.Height - 1);
+                                            gr2.DrawImage(block, 1 + x * BlockSize.Width, 1 + y * BlockSize.Height, BlockSize.Width, BlockSize.Height);
+                                            block.Dispose();
                                         }
-                                        gr2.DrawImage(block, 1 + x * BlockSize.Width, 1 + y * BlockSize.Height, BlockSize.Width, BlockSize.Height);
-                                        block.Dispose();
                                     }
                                 }
                             }
                         }
-                    }
-                    #endregion
+                        #endregion
 
-                    #region Отрисовка объектов
-                    for (int i = 0; i < World.Objects.Length; i++)
-                    {
-                        Bitmap objectbuffer = new Bitmap(World.Objects[i].Size.Width, World.Objects[i].Size.Height);
-                        using (Graphics gr3 = Graphics.FromImage(objectbuffer))
+                        #region Отрисовка объектов
+                        for (int i = 0; i < World.Objects.CountAll; i++)
                         {
-                            gr3.DrawImage(World.Objects[i].Sprite.GetIMG().bitmap, 0, 0, World.Objects[i].Size.Width, World.Objects[i].Size.Height);
-                            if (i == SelectedObjectIndex)
-                                gr3.DrawRectangle(Pens.Aqua, 0, 0, World.Objects[i].Size.Width - 1, World.Objects[i].Size.Height - 1);
+                            GameObject go = World.Objects.Get(i);
+                            if (go != null)
+                            {
+                                var img = go.Sprite.GetIMG();
+                                Bitmap objectbuffer = new Bitmap(img.bitmap.Width, img.bitmap.Height);
+                                using (Graphics gr3 = Graphics.FromImage(objectbuffer))
+                                {
+                                    if (go.ID != "invisible wall")
+                                        gr3.DrawImage(img.bitmap, 0, 0, img.bitmap.Width, img.bitmap.Height);
+                                    else
+                                        gr3.Clear(Color.FromArgb(127, 255, 255, 0));
+                                    if (ShowPassability && go.Hitbox != null)
+                                        gr3.FillRectangle(new SolidBrush(Color.FromArgb(127, 255, 255, 0)), go.Hitbox);
+                                }
+                                Point op = new Point(Convert.ToInt32(Math.Round(go.Location.X, 0)), Convert.ToInt32(Math.Round(go.Location.Y, 0)));
+                                gr2.DrawImage(objectbuffer, op.X, op.Y, go.Size.Width, go.Size.Height);
+                                if (i == SelectedObjectIndex)
+                                    gr2.DrawRectangle(Pens.Aqua, op.X, op.Y, go.Size.Width - 1, go.Size.Height - 1);
+                            }
                         }
-                        gr2.DrawImage(objectbuffer, Convert.ToInt32(Math.Round(World.Objects[i].Location.X, 0)), Convert.ToInt32(Math.Round(World.Objects[i].Location.Y, 0)), World.Objects[i].Size.Width, World.Objects[i].Size.Height);
-                    }
-                    for (int i = 0; i < World.Creatures.Length; i++)
-                    {
-                        Bitmap objectbuffer = new Bitmap(World.Creatures[i].Size.Width, World.Creatures[i].Size.Height);
-                        using (Graphics gr3 = Graphics.FromImage(objectbuffer))
-                        {
-                            gr3.DrawImage(World.Creatures[i].Sprite.GetIMG().bitmap, 0, 0, World.Creatures[i].Size.Width, World.Creatures[i].Size.Height);
-                            if (i == SelectedCreatureIndex)
-                                gr3.DrawRectangle(Pens.Aqua, 0, 0, World.Creatures[i].Size.Width - 1, World.Creatures[i].Size.Height - 1);
-                        }
-                        gr2.DrawImage(objectbuffer, Convert.ToInt32(Math.Round(World.Creatures[i].Location.X, 0)), Convert.ToInt32(Math.Round(World.Creatures[i].Location.Y, 0)), World.Creatures[i].Size.Width, World.Creatures[i].Size.Height);
-                    }
-                    for (int i = 0; i < World.Players.Length; i++)
-                    {
-                        Bitmap objectbuffer = new Bitmap(World.Players[i].Size.Width, World.Players[i].Size.Height);
-                        using (Graphics gr3 = Graphics.FromImage(objectbuffer))
-                        {
-                            gr3.DrawImage(World.Players[i].Sprite.GetIMG().bitmap, 0, 0, World.Players[i].Size.Width, World.Players[i].Size.Height);
-                            if (i == SelectedPlayerIndex)
-                                gr3.DrawRectangle(Pens.Aqua, 0, 0, World.Players[i].Size.Width - 1, World.Players[i].Size.Height - 1);
-                        }
-                        gr2.DrawImage(objectbuffer, Convert.ToInt32(Math.Round(World.Players[i].Location.X, 0)), Convert.ToInt32(Math.Round(World.Players[i].Location.Y, 0)), World.Players[i].Size.Width, World.Players[i].Size.Height);
-                    }
-                    #endregion
+                        #endregion
 
-                    #region Превью устанавливаемого объекта
-                    if (Brush == EditorBrush.AddObject)
-                    {
-                        if (Textures_List.SelectedIndex >= 0)
+                        #region Превью устанавливаемого объекта
+                        if (Brush == EditorBrush.AddObject)
                         {
-                            string Object = Textures_List.Items[Textures_List.SelectedIndex].ToString();
-                            Bitmap obj = new Bitmap(64, 64);
-                            Size osize = new Size(0, 0);
-                            GameObject temp1 = GameObjects.Get(Object);
-                            Creature temp2 = Creatures.Get(Object);
-                            Player temp3 = Players.Get(Object);
-                            if (temp1 != null)
+                            if (Textures_List.SelectedIndex >= 0)
                             {
-                                obj = temp1.Sprite.GetIMG().bitmap;
-                                osize = temp1.Size;
+                                string Object = Textures_List.Items[Textures_List.SelectedIndex].ToString();
+                                Bitmap obj = new Bitmap(64, 64);
+                                Size osize = new Size(0, 0);
+                                GameObject temp1 = GameObjects.Get(Object);
+                                Creature temp2 = Creatures.Get(Object);
+                                Player temp3 = Players.Get(Object);
+                                if (temp1 != null)
+                                {
+                                    obj = temp1.Sprite.GetIMG().bitmap;
+                                    osize = temp1.Size;
+                                }
+                                else if (temp2 != null)
+                                {
+                                    obj = temp2.Sprite.GetIMG().bitmap;
+                                    osize = temp2.Size;
+                                }
+                                else if (temp3 != null)
+                                {
+                                    obj = temp3.Sprite.GetIMG().bitmap;
+                                    osize = temp3.Size;
+                                }
+                                gr2.DrawImage(obj, MousePos.X - osize.Width / 2, MousePos.Y - osize.Height / 2, osize.Width, osize.Height);
+                                gr2.DrawRectangle(new Pen(Color.Gray), MousePos.X - osize.Width / 2, MousePos.Y - osize.Height / 2, osize.Width, osize.Height);
                             }
-                            else if (temp2 != null)
-                            {
-                                obj = temp2.Sprite.GetIMG().bitmap;
-                                osize = temp2.Size;
-                            }
-                            else if (temp3 != null)
-                            {
-                                obj = temp3.Sprite.GetIMG().bitmap;
-                                osize = temp3.Size;
-                            }
-                            gr2.DrawImage(obj, MousePos.X - osize.Width / 2, MousePos.Y - osize.Height / 2, osize.Width, osize.Height);
                         }
-                    }
-                    #endregion
+                        if (Brush == EditorBrush.InsertObject)
+                        {
+                            gr2.DrawImage(IOBuffer.Sprite.GetIMG().bitmap, MousePos.X - IOBuffer.Size.Width / 2, MousePos.Y - IOBuffer.Size.Height / 2, IOBuffer.Size.Width, IOBuffer.Size.Height);
+                            gr2.DrawRectangle(new Pen(Color.Gray), MousePos.X - IOBuffer.Size.Width / 2, MousePos.Y - IOBuffer.Size.Height / 2, IOBuffer.Size.Width, IOBuffer.Size.Height);
+                        }
+                        #endregion
 
-                    gr2.DrawRectangle(Pens.Black, 0, 0, WorldRect.Width + 1, WorldRect.Height + 1);
+                        gr2.DrawRectangle(Pens.Black, 0, 0, WorldRect.Width + 1, WorldRect.Height + 1);
+                    }
+                    gr1.DrawImage(buffer2, WorldRect.X, WorldRect.Y);
+                    buffer2.Dispose();
                 }
-                gr1.DrawImage(buffer2, WorldRect.X, WorldRect.Y);
-                buffer2.Dispose();
+                gr.DrawImage(buffer1, 0, 0, buffer1.Width, buffer1.Height);
+                buffer1.Dispose();
             }
-            graphics.DrawImageUnscaledAndClipped(buffer1, DrawingRect);
-            buffer1.Dispose();
-
-            //if (GC.GetTotalMemory(false) > (2 * 1024 * 1024)) GC.Collect();
+            graphics.DrawImage(output, DrawingRect);
         }
 
         private Point _hoverblock;
@@ -322,8 +311,6 @@ namespace WorldEditor
         Size Shift;
 
         int SelectedObjectIndex = -1;
-        int SelectedCreatureIndex = -1;
-        int SelectedPlayerIndex = -1;
 
         Point MousePos = new Point(0, 0);
         private void Form1_MouseMove(object sender, MouseEventArgs e)
@@ -341,39 +328,22 @@ namespace WorldEditor
                 {
                     if (SelectedObjectIndex != -1)
                     {
-                        World.Objects[SelectedObjectIndex].Location = new Location(
-                            World.Objects[SelectedObjectIndex].Location.X - (PreviousPosition.X - e.X), 
-                            World.Objects[SelectedObjectIndex].Location.Y - (PreviousPosition.Y - e.Y), 
-                            World.Objects[SelectedObjectIndex].Location.Z
+                        GameObject go = World.Objects.Get(SelectedObjectIndex);
+                        go.Location = new Location(
+                            go.Location.X - (PreviousPosition.X - e.X),
+                            go.Location.Y - (PreviousPosition.Y - e.Y),
+                            go.Location.Z
                         );
                         PreviousPosition = e.Location;
-                        label5.Text = String.Format("Координаты: {0}:{1}", World.Objects[SelectedObjectIndex].Location.X, World.Objects[SelectedObjectIndex].Location.Y);
-                    }
-                    else if (SelectedCreatureIndex != -1)
-                    {
-                        World.Creatures[SelectedCreatureIndex].Location = new Location(
-                            World.Creatures[SelectedCreatureIndex].Location.X - (PreviousPosition.X - e.X),
-                            World.Creatures[SelectedCreatureIndex].Location.Y - (PreviousPosition.Y - e.Y),
-                            World.Creatures[SelectedCreatureIndex].Location.Z
-                        );
-                        PreviousPosition = e.Location;
-                        label5.Text = String.Format("Координаты: {0}:{1}", World.Creatures[SelectedCreatureIndex].Location.X, World.Creatures[SelectedCreatureIndex].Location.Y);
-                    }
-                    else if (SelectedPlayerIndex != -1)
-                    {
-                        World.Players[SelectedPlayerIndex].Location = new Location(
-                            World.Players[SelectedPlayerIndex].Location.X - (PreviousPosition.X - e.X),
-                            World.Players[SelectedPlayerIndex].Location.Y - (PreviousPosition.Y - e.Y),
-                            World.Players[SelectedPlayerIndex].Location.Z
-                        );
-                        PreviousPosition = e.Location;
-                        label5.Text = String.Format("Координаты: {0}:{1}", World.Players[SelectedPlayerIndex].Location.X, World.Players[SelectedPlayerIndex].Location.Y);
+                        UnLockCurrentObjectInfo();
+                        UpdateCurrentObjectInfo();
                     }
                     else
                     {
                         isObjectDraging = false;
                         PreviousPosition = new Point(-1, -1);
-                        label5.Text = String.Format("Координаты: -1:-1");
+                        CurrentObjectInfoSetNull();
+                        LockCurrentObjectInfo();
                     }
                 }
             }
@@ -383,7 +353,8 @@ namespace WorldEditor
                 isMapDraging = false;
                 isObjectDraging = false;
                 PreviousPosition = new Point(-1, -1);
-                label5.Text = String.Format("Координаты: -1:-1");
+                CurrentObjectInfoSetNull();
+                LockCurrentObjectInfo();
             }
             #endregion
 
@@ -473,6 +444,8 @@ namespace WorldEditor
         Point PreviousBlock = new Point(-1, -1);
         private void WorldEditor_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.X < DrawingRect.Left || e.X > DrawingRect.Right || e.Y < DrawingRect.Top || e.Y > DrawingRect.Bottom) return;
+
             MousePos = new Point(e.X - WorldRect.X, e.Y - menuStrip1.Height - WorldRect.Y);
             if (Brush == EditorBrush.Hand)
             {
@@ -482,7 +455,7 @@ namespace WorldEditor
                 Shift = new Size(e.X - WorldRect.X, e.Y - WorldRect.Y);
             }
 
-            #region Действия по клику (выбор, очищение, удаление/добавление слоя, выбор/добавление объекта
+            #region Действия по клику (выбор, очищение, удаление/добавление слоя, выбор/добавление объекта)
             // выбор блока
             if (e.X >= DrawingRect.Left && e.X <= DrawingRect.Right && e.Y >= DrawingRect.Top && e.Y <= DrawingRect.Bottom)
             {
@@ -566,34 +539,22 @@ namespace WorldEditor
                     try { temp3 = Players.Get(Object).Clone(); } catch { temp3 = null; }
                     if (temp1 != null)
                     {
-                        GameObject[] temp = new GameObject[World.Objects.Length + 1];
-                        for (int i = 0; i < World.Objects.Length; i++)
-                            temp[i] = World.Objects[i];
-                        temp[World.Objects.Length] = temp1;
-                        temp[World.Objects.Length].Location = new Location(MousePos.X - temp[World.Objects.Length].Size.Width / 2, MousePos.Y - temp[World.Objects.Length].Size.Height / 2, 0);
-                        World.Objects = temp;
+                        temp1.Location = new Location(MousePos.X - temp1.Size.Width / 2, MousePos.Y - temp1.Size.Height / 2, 0);
+                        World.Objects.Add(temp1);
                     }
                     else if (temp2 != null)
                     {
-                        Creature[] temp = new Creature[World.Creatures.Length + 1];
-                        for (int i = 0; i < World.Creatures.Length; i++)
-                            temp[i] = World.Creatures[i];
-                        temp[World.Creatures.Length] = temp2;
-                        temp[World.Creatures.Length].Location = new Location(MousePos.X - temp[World.Creatures.Length].Size.Width / 2, MousePos.Y - temp[World.Creatures.Length].Size.Height / 2, 0);
-                        World.Creatures = temp;
+                        temp2.Location = new Location(MousePos.X - temp2.Size.Width / 2, MousePos.Y - temp2.Size.Height / 2, 0);
+                        World.Objects.Add(temp2);
                     }
                     else if (temp3 != null)
                     {
-                        Player[] temp = new Player[World.Players.Length + 1];
-                        for (int i = 0; i < World.Players.Length; i++)
-                            temp[i] = World.Players[i];
-                        temp[World.Players.Length] = temp3;
-                        temp[World.Players.Length].Location = new Location(MousePos.X - temp[World.Players.Length].Size.Width / 2, MousePos.Y - temp[World.Players.Length].Size.Height / 2, 0);
-                        World.Players = temp;
+                        temp3.Location = new Location(MousePos.X - temp3.Size.Width / 2, MousePos.Y - temp3.Size.Height / 2, 0);
+                        World.Objects.Add(temp3);
                     }
                 }
 
-                label4.Text = String.Format("Всего: {0}", World.Objects.Length + World.Creatures.Length + World.Players.Length);
+                label4.Text = String.Format("Всего: {0}", World.Objects.CountAll);
             }
 
             //выбор объекта
@@ -602,11 +563,12 @@ namespace WorldEditor
                 double distance = 2147;
                 int d = -1;
 
-                for (int i = 0; i < World.Objects.Length; i++)
+                for (int i = 0; i < World.Objects.CountAll; i++)
                 {
+                    GameObject go = World.Objects.Get(i);
                     Point Center = new Point(
-                        (int)Math.Round(World.Objects[i].Location.X + World.Objects[i].Size.Width / 2, 0),
-                        (int)Math.Round(World.Objects[i].Location.Y + World.Objects[i].Size.Height / 2, 0)
+                        (int)Math.Round(go.Location.X + go.Size.Width / 2, 0),
+                        (int)Math.Round(go.Location.Y + go.Size.Height / 2, 0)
                     );
                     int d2 = (int)Math.Round(Math.Sqrt(Math.Pow(MousePos.X - Center.X, 2) + Math.Pow(MousePos.Y - Center.Y, 2)), 0);
                     if (distance > d2) 
@@ -615,91 +577,45 @@ namespace WorldEditor
                         d = i; 
                     }
                 }
-                for (int i = 0; i < World.Creatures.Length; i++)
-                {
-                    Point Center = new Point(
-                        (int)Math.Round(World.Creatures[i].Location.X + World.Creatures[i].Size.Width / 2, 0),
-                        (int)Math.Round(World.Creatures[i].Location.Y + World.Creatures[i].Size.Height / 2, 0)
-                    );
-                    int d2 = (int)Math.Round(Math.Sqrt(Math.Pow(MousePos.X - Center.X, 2) + Math.Pow(MousePos.Y - Center.Y, 2)), 0);
-                    if (distance > d2)
-                    {
-                        distance = d2;
-                        d = i + World.Objects.Length;
-                    }
-                }
-                for (int i = 0; i < World.Players.Length; i++)
-                {
-                    Point Center = new Point(
-                        (int)Math.Round(World.Players[i].Location.X + World.Players[i].Size.Width / 2, 0),
-                        (int)Math.Round(World.Players[i].Location.Y + World.Players[i].Size.Height / 2, 0)
-                    );
-                    int d2 = (int)Math.Round(Math.Sqrt(Math.Pow(MousePos.X - Center.X, 2) + Math.Pow(MousePos.Y - Center.Y, 2)), 0);
-                    if (distance > d2)
-                    {
-                        distance = d2;
-                        d = i + World.Objects.Length + World.Creatures.Length;
-                    }
-                }
 
                 if (d != -1)
                 {
-                    SelectedObjectIndex = -1;
-                    SelectedCreatureIndex = -1;
-                    SelectedPlayerIndex = -1;
-                    ObjectIndex.Enabled = false;
-                    ObjectIndex.Minimum = 0;
-                    if (d >= World.Objects.Length + World.Creatures.Length) //игрок ближе
-                    {
-                        SelectedPlayerIndex = d - World.Objects.Length - World.Creatures.Length;
-                        ObjectIndex.Maximum = World.Players.Length - 1;
-                        ObjectIndex.Value = SelectedPlayerIndex;
-                    }
-                    else if (d >= World.Objects.Length) //существо ближе
-                    {
-                        SelectedCreatureIndex = d - World.Objects.Length;
-                        ObjectIndex.Maximum = World.Creatures.Length - 1;
-                        ObjectIndex.Value = SelectedCreatureIndex;
-                    }
-                    else //объект ближе
-                    {
-                        SelectedObjectIndex = d;
-                        ObjectIndex.Maximum = World.Objects.Length - 1;
-                        ObjectIndex.Value = SelectedObjectIndex;
-                    }
-                    ObjectIndex.Enabled = true;
+                    SelectedObjectIndex = d;
+
+                    GameObject go = World.Objects.Get(SelectedObjectIndex, out ObjectType type);
+
+                    Object_GroupBox.Text = "Объект " + go.gID;
+
+                    CurObjCoordX.Value = (decimal)Math.Round(go.Location.X, 0);
+                    CurObjCoordY.Value = (decimal)Math.Round(go.Location.Y, 0);
+                    CurObjSizeWidth.Value = go.Size.Width;
+                    CurObjSizeHeight.Value = go.Size.Height;
+
+                    CurObjHitboxCoordX.Value = go.Hitbox.X;
+                    CurObjHitboxCoordY.Value = go.Hitbox.Y;
+                    CurObjHitboxSizeWidth.Value = go.Hitbox.Width;
+                    CurObjHitboxSizeHeight.Value = go.Hitbox.Height;
+
+                    if (type == ObjectType.Creature || type == ObjectType.Player)
+                        CurrentObjectData_GroupBox.Visible = true;
+                    else
+                        CurrentObjectData_GroupBox.Visible = false;
+
+                    UnLockCurrentObjectInfo();
+                    UpdateCurrentObjectInfo();
                 }
 
                 #region Перетаскивание объекта
-                if (SelectedObjectIndex != -1 || SelectedCreatureIndex != -1 || SelectedPlayerIndex != -1)
+                if (SelectedObjectIndex != -1)
                 {
-                    if (SelectedObjectIndex != -1)
-                    {
-                        if (MousePos.X > World.Objects[SelectedObjectIndex].Location.X &&
-                            MousePos.X < World.Objects[SelectedObjectIndex].Location.X + World.Objects[SelectedObjectIndex].Size.Width &&
-                            MousePos.Y > World.Objects[SelectedObjectIndex].Location.Y &&
-                            MousePos.Y < World.Objects[SelectedObjectIndex].Location.Y + World.Objects[SelectedObjectIndex].Size.Height)
-                            isObjectDraging = true;
-                        label5.Text = String.Format("Координаты: {0}:{1}", World.Objects[SelectedObjectIndex].Location.X, World.Objects[SelectedObjectIndex].Location.Y);
-                    }
-                    else if (SelectedCreatureIndex != -1)
-                    {
-                        if (MousePos.X > World.Creatures[SelectedCreatureIndex].Location.X &&
-                                MousePos.X < World.Creatures[SelectedCreatureIndex].Location.X + World.Creatures[SelectedCreatureIndex].Size.Width &&
-                                MousePos.Y > World.Creatures[SelectedCreatureIndex].Location.Y &&
-                                MousePos.Y < World.Creatures[SelectedCreatureIndex].Location.Y + World.Creatures[SelectedCreatureIndex].Size.Height)
-                            isObjectDraging = true;
-                        label5.Text = String.Format("Координаты: {0}:{1}", World.Creatures[SelectedCreatureIndex].Location.X, World.Creatures[SelectedCreatureIndex].Location.Y);
-                    }
-                    else if (SelectedPlayerIndex != -1)
-                    {
-                        if (MousePos.X > World.Players[SelectedPlayerIndex].Location.X &&
-                            MousePos.X < World.Players[SelectedPlayerIndex].Location.X + World.Players[SelectedPlayerIndex].Size.Width &&
-                            MousePos.Y > World.Players[SelectedPlayerIndex].Location.Y &&
-                            MousePos.Y < World.Players[SelectedPlayerIndex].Location.Y + World.Players[SelectedPlayerIndex].Size.Height)
-                            isObjectDraging = true;
-                        label5.Text = String.Format("Координаты: {0}:{1}", World.Players[SelectedPlayerIndex].Location.X, World.Players[SelectedPlayerIndex].Location.Y);
-                    }
+                    GameObject go = World.Objects.Get(SelectedObjectIndex);
+                    if (MousePos.X > go.Location.X &&
+                        MousePos.X < go.Location.X + go.Size.Width &&
+                        MousePos.Y > go.Location.Y &&
+                        MousePos.Y < go.Location.Y + go.Size.Height)
+                        isObjectDraging = true;
+                    UnLockCurrentObjectInfo();
+                    UpdateCurrentObjectInfo();
                     PreviousPosition = e.Location;
                 }
                 #endregion
@@ -707,12 +623,36 @@ namespace WorldEditor
             else
             {
                 SelectedObjectIndex = -1;
-                SelectedCreatureIndex = -1;
-                SelectedPlayerIndex = -1;
-                ObjectIndex.Enabled = false;
-                ObjectIndex.Minimum = -1;
-                ObjectIndex.Maximum = -1;
-                label5.Text = String.Format("Координаты: -1:-1");
+                CurrentObjectInfoSetNull();
+                LockCurrentObjectInfo();
+                Object_GroupBox.Text = "Объект";
+            }
+
+            //вставить объект
+            if (Brush == EditorBrush.InsertObject && IOBuffer != null)
+            {
+                IOBuffer.Location = new Location(MousePos.X - IOBuffer.Size.Width / 2, MousePos.Y - IOBuffer.Size.Height / 2, 0);
+
+                GameObject temp1 = GameObjects.Get(IOBuffer.ID);
+                Creature temp2 = Creatures.Get(IOBuffer.ID);
+                Player temp3 = Players.Get(IOBuffer.ID);
+                if (temp1 != null)
+                {
+                    IOBuffer.gID = DateTime.Now.Ticks.ToString() + (World.Objects.CountObjects - 1).ToString();
+                    World.Objects.Add(((GameObject)IOBuffer).Clone());
+                }
+                else
+                if (temp2 != null)
+                {
+                    IOBuffer.gID = DateTime.Now.Ticks.ToString() + (World.Objects.CountObjects + World.Objects.CountCreatures - 1).ToString();
+                    World.Objects.Add(((Creature)IOBuffer).Clone());
+                }
+                else
+                if (temp3 != null)
+                {
+                    IOBuffer.gID = DateTime.Now.Ticks.ToString() + (World.Objects.CountAll - 1).ToString();
+                    World.Objects.Add(((Player)IOBuffer).Clone());
+                }
             }
             #endregion
 
@@ -745,6 +685,7 @@ namespace WorldEditor
 
         private void СохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CheckCreatureData();
             DirectoryInfo di = new DirectoryInfo(DataPath);
             string json = JsonSerializer.Serialize<World>(World, GameData.JsonOpts);
             using (StreamWriter sw = new StreamWriter(di.FullName + "\\Map\\world.json", false))
@@ -898,55 +839,29 @@ namespace WorldEditor
                     Textures_List.Items.Clear();
                     for (int i = 0; i < GameObjects.Index.Length; i++)
                         Textures_List.Items.Add(GameObjects.Index[i].ID);
-                    for (int i = 0; i < Creatures.Index.Length; i++)
-                        Textures_List.Items.Add(Creatures.Index[i].ID);
-                    for (int i = 0; i < Players.Index.Length; i++)
-                        Textures_List.Items.Add(Players.Index[i].ID);
                     break;
                 case "Очистить блок":
                     Brush = EditorBrush.ClearBlock;
-                    Textures_List.Items.Clear();
-                    break;
-                case "Установить непроходимость":
-                    Brush = EditorBrush.SetImpassability;
-                    Textures_List.Items.Clear();
-                    break;
-                case "Удалить непроходимость":
-                    Brush = EditorBrush.SetPassability;
                     Textures_List.Items.Clear();
                     break;
                 case "Рука":
                     Brush = EditorBrush.Hand;
                     Textures_List.Items.Clear();
                     break;
+                case "Добавить существо":
+                    Brush = EditorBrush.AddObject;
+                    Textures_List.Items.Clear();
+                    for (int i = 0; i < Creatures.Index.Length; i++)
+                        Textures_List.Items.Add(Creatures.Index[i].ID);
+                    break;
+                case "Добавить игрока":
+                    Brush = EditorBrush.AddObject;
+                    Textures_List.Items.Clear();
+                    for (int i = 0; i < Players.Index.Length; i++)
+                        Textures_List.Items.Add(Players.Index[i].ID);
+                    break;
             }
             try { Draw(CreateGraphics()); } catch { }
-        }
-
-        private void ObjectIndex_ValueChanged(object sender, EventArgs e)
-        { 
-            if (ObjectIndex.Enabled)
-            {
-                if (SelectedObjectIndex != -1)
-                {
-                    GameObject temp = World.Objects[(int)ObjectIndex.Value];
-                    World.Objects[(int)ObjectIndex.Value] = World.Objects[SelectedObjectIndex].Clone();
-                    World.Objects[SelectedObjectIndex] = temp.Clone();
-                }
-                else if (SelectedCreatureIndex != -1)
-                {
-                    Creature temp = World.Creatures[(int)ObjectIndex.Value];
-                    World.Creatures[(int)ObjectIndex.Value] = World.Creatures[SelectedObjectIndex].Clone();
-                    World.Creatures[SelectedObjectIndex] = temp.Clone();
-                }
-                else if (SelectedPlayerIndex != -1)
-                {
-                    Player temp = World.Players[(int)ObjectIndex.Value];
-                    World.Players[(int)ObjectIndex.Value] = World.Players[SelectedObjectIndex].Clone();
-                    World.Players[SelectedObjectIndex] = temp.Clone();
-                }
-            }
-            Draw(CreateGraphics());
         }
 
         EditorBrush Brush;
@@ -959,9 +874,8 @@ namespace WorldEditor
             SelectObject,
             AddObject,
             ClearBlock,
-            SetImpassability,
-            SetPassability,
-            Hand
+            Hand,
+            InsertObject
         }
 
         private void WorldEditor_KeyPress(object sender, KeyPressEventArgs e)
@@ -978,17 +892,17 @@ namespace WorldEditor
             if (e.KeyChar == 'd' || e.KeyChar == 'в')
                 Brush_ComboBox.SelectedItem = "Удалить слой";
 
-            if (e.KeyChar == 'o' || e.KeyChar == 'щ')
+            if ((e.KeyChar == 'o' || e.KeyChar == 'щ') && Brush_ComboBox.SelectedItem.ToString() == "Добавить существо")
+                Brush_ComboBox.SelectedItem = "Добавить игрока";
+
+            if ((e.KeyChar == 'o' || e.KeyChar == 'щ') && Brush_ComboBox.SelectedItem.ToString() == "Добавить объект")
+                Brush_ComboBox.SelectedItem = "Добавить существо";
+
+            if ((e.KeyChar == 'o' || e.KeyChar == 'щ') && Brush_ComboBox.SelectedItem.ToString() != "Добавить существо" && Brush_ComboBox.SelectedItem.ToString() != "Добавить игрока")
                 Brush_ComboBox.SelectedItem = "Добавить объект";
 
             if (e.KeyChar == 'x' || e.KeyChar == 'ч')
                 Brush_ComboBox.SelectedItem = "Выбрать объект";
-
-            if (e.KeyChar == 'i' || e.KeyChar == 'ш')
-                Brush_ComboBox.SelectedItem = "Установить непроходимость";
-
-            if (e.KeyChar == 'p' || e.KeyChar == 'з')
-                Brush_ComboBox.SelectedItem = "Удалить непроходимость";
 
             if (e.KeyChar == 'h' || e.KeyChar == 'р')
                 Brush_ComboBox.SelectedItem = "Рука";
@@ -1006,62 +920,71 @@ namespace WorldEditor
             Draw(CreateGraphics());
         }
 
+        GameObject IOBuffer;
+
+        bool isCTRL = false;
         private void WorldEditor_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.ControlKey) isCTRL = true;
+            #region ctrl+x, ctrl+c, ctrl+v
+            if (isCTRL)
+            {
+                if (e.KeyCode.ToString() == "X")
+                {
+                    if (SelectedObjectIndex != -1)
+                    {
+                        IOBuffer = World.Objects.Get(SelectedObjectIndex);
+                        World.Objects.Delete(SelectedObjectIndex);
+                    }
+                    SelectedObjectIndex = -1;
+                }
+                if (e.KeyCode.ToString() == "C")
+                {
+                    if (SelectedObjectIndex != -1) IOBuffer = World.Objects.Get(SelectedObjectIndex).Clone();
+                }
+                if (e.KeyCode.ToString() == "V")
+                {
+                    if (IOBuffer != null)
+                    {
+                        Brush = EditorBrush.InsertObject;
+                    }
+                }
+            }
+            #endregion
+            #region ctrl+z, ctrl+y
+            if (isCTRL)
+            {
+                if (e.KeyCode.ToString() == "Z")
+                {
+
+                }
+                if (e.KeyCode.ToString() == "Y")
+                {
+
+                }
+            }
+            #endregion
+
             if (e.KeyCode.ToString() == "Delete")
             {
                 if (Brush == EditorBrush.SelectObject)
                 {
                     if (SelectedObjectIndex != -1)
                     {
-                        GameObject[] temp = new GameObject[World.Objects.Length - 1];
-                        for (int i = 0; i < World.Objects.Length - 1; i++)
-                        {
-                            if (i < SelectedObjectIndex)
-                                temp[i] = World.Objects[i].Clone();
-                            else
-                                temp[i] = World.Objects[i + 1].Clone();
-                        }
-                        World.Objects = temp;
+                        World.Objects.Delete(SelectedObjectIndex);
                         SelectedObjectIndex = -1;
-                        label4.Text = String.Format("Всего: {0}", World.Objects.Length + World.Creatures.Length + World.Players.Length);
-                        label5.Text = String.Format("Координаты: -1:-1");
-                    }
-                    else
-                    if (SelectedCreatureIndex != -1)
-                    {
-                        Creature[] temp = new Creature[World.Creatures.Length - 1];
-                        for (int i = 0; i < World.Creatures.Length - 1; i++)
-                        {
-                            if (i < SelectedCreatureIndex)
-                                temp[i] = World.Creatures[i].Clone();
-                            else
-                                temp[i] = World.Creatures[i + 1].Clone();
-                        }
-                        World.Creatures = temp;
-                        SelectedCreatureIndex = -1;
-                        label4.Text = String.Format("Всего: {0}", World.Objects.Length + World.Creatures.Length + World.Players.Length);
-                        label5.Text = String.Format("Координаты: -1:-1");
-                    }
-                    else
-                    if (SelectedPlayerIndex != -1)
-                    {
-                        Player[] temp = new Player[World.Players.Length - 1];
-                        for (int i = 0; i < World.Players.Length - 1; i++)
-                        {
-                            if (i < SelectedPlayerIndex)
-                                temp[i] = World.Players[i].Clone();
-                            else
-                                temp[i] = World.Players[i + 1].Clone();
-                        }
-                        World.Players = temp;
-                        SelectedPlayerIndex = -1;
-                        label4.Text = String.Format("Всего: {0}", World.Objects.Length + World.Creatures.Length + World.Players.Length);
-                        label5.Text = String.Format("Координаты: -1:-1");
+                        label4.Text = String.Format("Всего: {0}", World.Objects.CountAll);
+                        CurrentObjectInfoSetNull();
+                        LockCurrentObjectInfo();
                     }
                 }
             }
             Draw(CreateGraphics());
+        }
+
+        private void WorldEditor_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey) isCTRL = false;
         }
 
         private void WorldEditor_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -1088,6 +1011,267 @@ namespace WorldEditor
                 for (int y = 0; y < World.Ground[0].Length; y++)
                     if (World.Ground[x][y].Layers.Length > 1)
                         Collisions[x, y] = true;
+        }
+
+        static bool ShowPassability = false;
+        private void ОтображениеПроходимостиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowPassability = !ShowPassability;
+            отображениеПроходимостиToolStripMenuItem.Checked = ShowPassability;
+        }
+
+        #region Current object info changed
+        bool DisableEvents = false;
+        private void CurrentObjectInfoSetNull()
+        {
+            DisableEvents = true;
+            {
+                CurObjCoordX.Value = -1;
+                CurObjCoordY.Value = -1;
+                CurObjHitboxCoordX.Value = -1;
+                CurObjHitboxCoordY.Value = -1;
+                CurObjHitboxSizeWidth.Value = -1;
+                CurObjHitboxSizeHeight.Value = -1;
+                CurObjSizeWidth.Value = -1;
+                CurObjSizeHeight.Value = -1;
+                MaxHP.Value = -1;
+                MaxSatiety.Value = -1;
+                MaxWater.Value = -1;
+            }
+            DisableEvents = false;
+        }
+        private void UpdateCurrentObjectInfo()
+        {
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+
+            DisableEvents = true;
+            {
+                CurObjCoordX.Value = (int)Math.Round(obj.Location.X, 0);
+                CurObjCoordY.Value = (int)Math.Round(obj.Location.Y, 0);
+                CurObjSizeWidth.Value = obj.Size.Width;
+                CurObjSizeHeight.Value = obj.Size.Height;
+
+                CurObjHitboxCoordX.Value = obj.Hitbox.X;
+                CurObjHitboxCoordY.Value = obj.Hitbox.Y;
+                CurObjHitboxSizeWidth.Value = obj.Hitbox.Width;
+                CurObjHitboxSizeHeight.Value = obj.Hitbox.Height;
+
+                if (CurrentObjectData_GroupBox.Visible)
+                {
+                    if (obj is Creature cr)
+                    {
+                        MaxHP.Value = (int)Math.Round(cr.HPMax, 0);
+                        MaxSatiety.Value = cr.SatietyMax;
+                        MaxWater.Value = cr.WaterMax;
+                    }
+                }
+                else
+                {
+                    MaxHP.Value = -1;
+                    MaxSatiety.Value = -1;
+                    MaxWater.Value = -1;
+                }
+            }
+            DisableEvents = false;
+        }
+        private void LockCurrentObjectInfo()
+        {
+            CurObjCoordX.Enabled = false;
+            CurObjCoordY.Enabled = false;
+            CurObjHitboxCoordX.Enabled = false;
+            CurObjHitboxCoordY.Enabled = false;
+            CurObjSizeWidth.Enabled = false;
+            CurObjSizeHeight.Enabled = false;
+            CurObjHitboxSizeWidth.Enabled = false;
+            CurObjHitboxSizeHeight.Enabled = false;
+        }
+        private void UnLockCurrentObjectInfo()
+        {
+            CurObjCoordX.Enabled = true;
+            CurObjCoordY.Enabled = true;
+            CurObjHitboxCoordX.Enabled = true;
+            CurObjHitboxCoordY.Enabled = true;
+            CurObjSizeWidth.Enabled = true;
+            CurObjSizeHeight.Enabled = true;
+            CurObjHitboxSizeWidth.Enabled = true;
+            CurObjHitboxSizeHeight.Enabled = true;
+        }
+
+        decimal cocx_old = -1;
+        private void CurObjCoordX_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cocx_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Location = new Location((double)CurObjCoordX.Value, obj.Location.Y, obj.Location.Z);
+            Draw(CreateGraphics());
+        }
+
+        decimal cocy_old = -1;
+        private void CurObjCoordY_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cocy_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Location = new Location(obj.Location.X, (double)CurObjCoordY.Value, obj.Location.Z);
+            Draw(CreateGraphics());
+        }
+
+        decimal cohcx_old = -1;
+        private void CurObjHitboxCoordX_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cohcx_old = CurObjHitboxCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Hitbox = new Rectangle((int)CurObjHitboxCoordX.Value, obj.Hitbox.Y, obj.Hitbox.Width, obj.Hitbox.Height);
+            Draw(CreateGraphics());
+        }
+
+        decimal cohcy_old = -1;
+        private void CurObjHitboxCoordY_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cohcy_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Hitbox = new Rectangle(obj.Hitbox.X, (int)CurObjHitboxCoordY.Value, obj.Hitbox.Width, obj.Hitbox.Height);
+            Draw(CreateGraphics());
+        }
+
+        decimal cosw_old = -1;
+        private void CurObjSizeWidth_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cosw_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Size = new Size((int)CurObjSizeWidth.Value, obj.Size.Height);
+            Draw(CreateGraphics());
+        }
+
+        decimal cosh_old = -1;
+        private void CurObjSizeHeight_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cosh_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Size = new Size(obj.Size.Width, (int)CurObjSizeHeight.Value);
+            Draw(CreateGraphics());
+        }
+
+        decimal cohsw_old = -1;
+        private void CurObjHitboxSizeWidth_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cohsw_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Hitbox = new Rectangle(obj.Hitbox.X, obj.Hitbox.Y, (int)CurObjHitboxSizeWidth.Value, obj.Hitbox.Height);
+            Draw(CreateGraphics());
+        }
+
+        decimal cohsh_old = -1;
+        private void CurObjHitboxSizeHeight_ValueChanged(object sender, EventArgs e)
+        {
+            if (DisableEvents) return;
+
+            cohsh_old = CurObjCoordX.Value;
+
+            GameObject obj = new GameObject();
+            if (SelectedObjectIndex != -1)
+                obj = World.Objects.Get(SelectedObjectIndex);
+            else
+                return;
+            obj.Hitbox = new Rectangle(obj.Hitbox.X, obj.Hitbox.Y, obj.Hitbox.Width, (int)CurObjHitboxSizeHeight.Value);
+            Draw(CreateGraphics());
+        }
+
+        private void MaxHP_ValueChanged(object sender, EventArgs e)
+        {
+            if (SelectedObjectIndex != -1)
+                if (World.Objects.Get(SelectedObjectIndex) is Creature cr) cr.HPMax = (double)MaxHP.Value;
+        }
+
+        private void MaxSatiety_ValueChanged(object sender, EventArgs e)
+        {
+            if (SelectedObjectIndex != -1)
+                if (World.Objects.Get(SelectedObjectIndex) is Creature cr) cr.SatietyMax = (int)MaxSatiety.Value;
+        }
+
+        private void MaxWater_ValueChanged(object sender, EventArgs e)
+        {
+            if (SelectedObjectIndex != -1)
+                if (World.Objects.Get(SelectedObjectIndex) is Creature cr) cr.WaterMax = (int)MaxWater.Value;
+        }
+        #endregion
+
+        private void CheckCreatureData()
+        {
+            for (int i = 0; i < World.Objects.CountCreatures; i++)
+            {
+                World.Objects.Get(i, out Creature cr);
+                if (cr != null)
+                {
+                    cr.Vulnarable = false;
+                    cr.HP = cr.HPMax;
+                    cr.Satiety = cr.SatietyMax;
+                    cr.Water = cr.WaterMax;
+                    cr.Vulnarable = true;
+                }
+            }
+        }
+
+        private void ПерезагрузитьТекстурыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Textures.Init();
+            Animations.Init();
+            GameObjects.Init();
+            Creatures.Init();
+            Players.Init();
+            Init();
         }
     }
 }

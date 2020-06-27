@@ -1,0 +1,46 @@
+[
+  {
+    "HP": 200,
+    "HPMax": 200,
+    "HPRegen": false,
+    "HPRegenSpeed": 1,
+    "isDead": false,
+    "isAlive": true,
+    "Vulnarable": true,
+    "MP": 0,
+    "MPMax": 0,
+    "MPRegen": false,
+    "MPRegenSpeed": 0,
+    "Strength": 0,
+    "Protection": 0,
+    "Vitality": 0,
+    "Willpower": 0,
+    "Damage": 0,
+    "DamageType": 0,
+    "Resists": {},
+    "Armor": {
+      "Sprite": null,
+      "Name": null,
+      "Description": null,
+      "Protection": 0,
+      "Resists": {},
+      "Weight": 1
+    },
+    "SelectedWeapon": null,
+    "CurrentWeapons": null,
+    "Animations": null,
+    "ID": "player",
+    "Name": null,
+    "Location": {
+      "X": 192,
+      "Y": 192,
+      "Z": 0
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "MoveSpeed": 128
+  }
+]

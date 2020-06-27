@@ -1,6 +1,6 @@
 [
   {
-    "File": "pLayer.calm.gif",
+    "File": "player.calm.gif",
 	"isAnimated": true,
     "srcRect": {
         "Location": {
@@ -28,12 +28,39 @@
       "Width": 48,
       "Height": 48
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "player",
+	"Type": 5
+  },
+  {
+    "File": "городские жители.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 192,
+          "Y": 288
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 48,
+          "Height": 72
+        },
+        "X": 192,
+        "Y": 288,
+        "Width": 48,
+        "Height": 72,
+        "Left": 192,
+        "Top": 288,
+        "Right": 240,
+        "Bottom": 360,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 48,
+      "Height": 72
+    },
+    "ID": "shop",
 	"Type": 5
   },
   {
@@ -64,11 +91,6 @@
       "IsEmpty": false,
       "Width": 48,
       "Height": 48
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "player2",
 	"Type": 4
@@ -102,13 +124,40 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "empty",
 	"Type": 1
+  },
+  {
+    "File": "Terrains.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1920,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 1920,
+        "Y": 0,
+        "Width": 64,
+        "Height": 64,
+        "Left": 1920,
+        "Top": 0,
+        "Right": 1984,
+        "Bottom": 64,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "ID": "invisible wall",
+	"Type": 3
   },
   {
     "File": "Terrains.png",
@@ -138,11 +187,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "grass1",
 	"Type": 1
@@ -176,11 +220,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "grass2",
 	"Type": 1
   },
@@ -212,11 +251,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "grass3",
 	"Type": 1
@@ -250,11 +284,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "grass4",
 	"Type": 1
   },
@@ -286,11 +315,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "grass5",
 	"Type": 1
@@ -324,11 +348,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "grass6",
 	"Type": 1
   },
@@ -360,11 +379,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w25_11",
 	"Type": 1
@@ -398,11 +412,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "coast_w50_12",
 	"Type": 1
   },
@@ -434,11 +443,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w25_13",
 	"Type": 1
@@ -472,11 +476,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "coast_w25_21",
 	"Type": 1
   },
@@ -508,11 +507,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w50_22",
 	"Type": 1
@@ -546,11 +540,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "coast_w25_23",
 	"Type": 1
   },
@@ -582,11 +571,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w25_31",
 	"Type": 1
@@ -620,11 +604,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "coast_w50_32",
 	"Type": 1
   },
@@ -656,11 +635,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w25_33",
 	"Type": 1
@@ -694,11 +668,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "coast_w75_11",
 	"Type": 1
   },
@@ -730,11 +699,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w75_12",
 	"Type": 1
@@ -768,11 +732,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "coast_w75_21",
 	"Type": 1
   },
@@ -804,11 +763,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "coast_w75_22",
 	"Type": 1
@@ -842,11 +796,6 @@
       "Width": 64,
       "Height": 64
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
-    },
     "ID": "stones1",
 	"Type": 1
   },
@@ -878,11 +827,6 @@
       "IsEmpty": false,
       "Width": 64,
       "Height": 64
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 32,
-      "Y": 32
     },
     "ID": "stones2",
 	"Type": 1
@@ -916,11 +860,6 @@
       "Width": 208,
       "Height": 208
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 104,
-      "Y": 104
-    },
     "ID": "dark_tree1",
 	"Type": 3
   },
@@ -952,11 +891,6 @@
       "IsEmpty": false,
       "Width": 208,
       "Height": 208
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 104,
-      "Y": 104
     },
     "ID": "tree1",
 	"Type": 3
@@ -990,11 +924,6 @@
       "Width": 266,
       "Height": 251
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 133,
-      "Y": 125
-    },
     "ID": "house1",
 	"Type": 3
   },
@@ -1026,11 +955,6 @@
       "IsEmpty": false,
       "Width": 302,
       "Height": 280
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 151,
-      "Y": 140
     },
     "ID": "house2",
 	"Type": 3
@@ -1064,11 +988,6 @@
       "Width": 288,
       "Height": 276
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 144,
-      "Y": 138
-    },
     "ID": "house3",
 	"Type": 3
   },
@@ -1100,11 +1019,6 @@
       "IsEmpty": false,
       "Width": 370,
       "Height": 289
-    },
-    "Center": {
-      "IsEmpty": false,
-      "X": 185,
-      "Y": 144
     },
     "ID": "house4",
 	"Type": 3
@@ -1138,12 +1052,135 @@
       "Width": 240,
       "Height": 192
     },
-    "Center": {
-      "IsEmpty": false,
-      "X": 120,
-      "Y": 96
-    },
     "ID": "house5",
 	"Type": 3
+  },
+  {
+    "File": "flask.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 0,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 96,
+          "Height": 96
+        },
+        "X": 0,
+        "Y": 0,
+        "Width": 96,
+        "Height": 96,
+        "Left": 0,
+        "Top": 0,
+        "Right": 96,
+        "Bottom": 96,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 32,
+      "Height": 32
+    },
+    "ID": "flask",
+	"Type": 2
+  },
+  {
+    "File": "еда.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 418,
+          "Y": 388
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 418,
+        "Y": 388,
+        "Width": 64,
+        "Height": 64,
+        "Left": 418,
+        "Top": 388,
+        "Right": 482,
+        "Bottom": 452,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "ID": "bread",
+	"Type": 2
+  },
+  {
+    "File": "еда.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 218,
+          "Y": 458
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 218,
+        "Y": 458,
+        "Width": 64,
+        "Height": 64,
+        "Left": 218,
+        "Top": 458,
+        "Right": 282,
+        "Bottom": 522,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "ID": "soup",
+	"Type": 2
+  },
+  {
+    "File": "terra_2.png",
+	"isAnimated": false,
+    "srcRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 448,
+          "Y": 0
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 64,
+          "Height": 64
+        },
+        "X": 448,
+        "Y": 0,
+        "Width": 64,
+        "Height": 64,
+        "Left": 0,
+        "Top": 0,
+        "Right": 512,
+        "Bottom": 64,
+        "IsEmpty": false
+    },
+    "Size": {
+      "IsEmpty": false,
+      "Width": 64,
+      "Height": 64
+    },
+    "ID": "cobblestone1",
+	"Type": 1
   }
 ]

@@ -10,6 +10,7 @@ namespace EssenceOfMagic
 {
     public partial class GraphicSurface : GLControl
     {
+        public delegate void ThreadTransit(GLGraphics g);
         // ============================================================
         bool mIsLoaded = false;
 
@@ -44,14 +45,7 @@ namespace EssenceOfMagic
             g.Clear();
             g.SetClearColor(SystemColors.ActiveCaption);
 
-            try 
-            { 
-                OnDraw(g); 
-            } 
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "Error");
-            }
+            OnDraw?.Invoke(g);
 
             i++;
             if ((DateTime.Now - Last).TotalMilliseconds >= 1000)
@@ -66,10 +60,10 @@ namespace EssenceOfMagic
             mGraphics = g;
 
             TimeSpan ts = DateTime.Now - t1;
-            if (ts.TotalMilliseconds * 1.45 < _fpslimit)
-                Thread.Sleep(_fpslimit - Convert.ToInt32(Math.Round(ts.TotalMilliseconds * 1.45, 0)));
+            if (ts.TotalMilliseconds * 1.15 < _fpslimit)
+                Thread.Sleep(_fpslimit - Convert.ToInt32(Math.Round(ts.TotalMilliseconds * 1.15, 0)));
 
-            Invalidate();
+            //Invalidate();
         }
         // ============================================================
         private void GraphicSurface_Load(object sender, EventArgs e)
@@ -81,11 +75,9 @@ namespace EssenceOfMagic
 
             mIsLoaded = true;   // OpenGL контекст уже должен быть создан
 
-            //try { 
-                OnLoad(); 
-            //} catch { }
+            OnLoad?.Invoke();
 
-            Invalidate();
+            //Invalidate();
         }
 
         private void GraphicSurface_Resize(object sender, EventArgs e)
@@ -98,6 +90,36 @@ namespace EssenceOfMagic
             mGraphics.Resize(Width, Height);
 
             GameData.Window = new Size(Width, Height);
+        }
+
+        public void Draw(GLGraphics g)
+        {
+            DateTime t1 = DateTime.Now;
+            MakeCurrent();
+
+            g.Init();
+            g.Reset();
+            g.Clear();
+            g.SetClearColor(SystemColors.ActiveCaption);
+
+            mGraphics = g;
+
+                OnDraw?.Invoke(g);
+
+                i++;
+                if ((DateTime.Now - Last).TotalMilliseconds >= 1000)
+                {
+                    FPS = i;
+                    i = 0;
+                    Last = DateTime.Now;
+                }
+
+                SwapBuffers();
+
+                TimeSpan ts = DateTime.Now - t1;
+                if (ts.TotalMilliseconds < _fpslimit)
+                    Thread.Sleep(_fpslimit - (int)Math.Round(ts.TotalMilliseconds, 0));
+            
         }
         // ============================================================
         public delegate void DrawEventHandler(GLGraphics e);
@@ -115,8 +137,8 @@ namespace EssenceOfMagic
         /// </summary>
         public int FPSlimit
         {
-            get { if (_fpslimit != 0) return 1000 / _fpslimit; else return int.MaxValue; }
-            set { if (value > 0) _fpslimit = 1000 / value; else _fpslimit = 0; }
+            get { if (_fpslimit != 0) return (int)Math.Round(1000.0 / _fpslimit, 0); else return int.MaxValue; }
+            set { if (value > 0) _fpslimit = (int)Math.Round(1000.0 / value, 0); else _fpslimit = 0; }
         }
     }
 }

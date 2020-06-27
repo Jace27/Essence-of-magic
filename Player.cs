@@ -8,6 +8,8 @@ namespace EssenceOfMagic
         public Player()
         {
             ID = "player";
+            Name = "К а с т и э л ь";
+            HP = HP;
         }
 
         new public Player Clone()
